@@ -5,94 +5,91 @@
  * @format
  */
 
-import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {StyleSheet, Text, useColorScheme, View} from 'react-native';
+import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 
 import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+  DarkTheme,
+  DefaultTheme,
+  NavigationContainer,
+} from '@react-navigation/native';
+import {navigationRef} from './src/routers/NavigationService';
+import {LoadingProvider} from './src/hook/LoadingContex';
+import Spinner from './src/compoments/spinner';
+import Toast, {
+  BaseToast,
+  BaseToastProps,
+  ErrorToast,
+} from 'react-native-toast-message';
+import {appColors} from './src/constants/color';
+import RootNavigator from './src/routers/RootNavigator';
+import FastImage from 'react-native-fast-image';
+import {images} from './src/assets/images';
+import {AppText} from './src/compoments/text/AppText';
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
+export const toastConfig = {
+  success: (props: React.JSX.IntrinsicAttributes & BaseToastProps) => (
+    <BaseToast
+      style={{borderLeftColor: appColors.xanhLa, marginHorizontal: 20}}
+      {...props}
+      text1NumberOfLines={3}
+      text2NumberOfLines={3}
+    />
+  ),
+  error: (props: JSX.IntrinsicAttributes & BaseToastProps) => (
+    <ErrorToast
+      style={{borderLeftColor: appColors.do, marginHorizontal: 20}}
+      {...props}
+      text1NumberOfLines={3}
+      text2NumberOfLines={3}
+    />
+  ),
+  // // custom
+  // tomatoToast: ({text1, props}) => (
+  //   <View style={{height: 60, width: '100%', backgroundColor: 'tomato'}}>
+  //     <Text numberOfLines={2}>{text1}</Text>
+  //     <Text>{props.uuid}</Text>
+  //   </View>
+  // ),
+};
 
 function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+  const isDarkMode = useColorScheme();
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
+  const [allowOpenApp, setAllowOpenApp] = useState(false);
+
+  useEffect(() => {
+    fetchData()
+  },[])
+
+  const fetchData = () => {
+    setTimeout(() => {
+      setAllowOpenApp(true)
+    },1500)
+  }
+
+
+  if (!allowOpenApp) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <FastImage resizeMode='cover' source={images.shoppefood} style={styles.image} />
+      </SafeAreaView>
+    );
+  }
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+    <SafeAreaProvider>
+      <NavigationContainer
+        theme={isDarkMode === 'dark' ? DarkTheme : DefaultTheme}
+        ref={navigationRef}>
+        <LoadingProvider>
+          <RootNavigator />
+          <Spinner />
+          <Toast config={toastConfig} />
+        </LoadingProvider>
+      </NavigationContainer>
+    </SafeAreaProvider>
   );
 }
 
@@ -112,6 +109,16 @@ const styles = StyleSheet.create({
   },
   highlight: {
     fontWeight: '700',
+  },
+  container: {
+    flex: 1,
+    backgroundColor: appColors.trangNhat,
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  image: {
+    width: 150,
+    height: 150,
   },
 });
 

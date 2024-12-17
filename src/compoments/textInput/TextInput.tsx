@@ -59,7 +59,7 @@ export const AppInput = (props: IAppInputProps) => {
 				<View style={theme.labelWrapper}>
 					<Text style={theme.label}>{props?.label}</Text>
 					{props?.required && props?.label ? (
-						<Text style={{ fontSize: appFontSizes.small, color: appColors.red }}>{'⁕'}</Text>
+						<Text style={{ fontSize: appFontSizes.small, color: appColors.do }}>{'⁕'}</Text>
 					) : null}
 				</View>
 			) : null}
@@ -68,7 +68,7 @@ export const AppInput = (props: IAppInputProps) => {
 					<FastImage
 						source={props?.iconLeft}
 						style={theme.icon}
-						tintColor={props?.iconLeftColor || appColors.main}
+						tintColor={props?.iconLeftColor || appColors.cam}
 					/>
 				) : null}
 				{props?.IconLeft ? props?.IconLeft : null}
@@ -76,7 +76,7 @@ export const AppInput = (props: IAppInputProps) => {
 					style={[theme.input]}
 					placeholder={props?.placeHolder}
 					keyboardType={props?.keyboardType}
-					placeholderTextColor={appColors.text_placeholder}
+					placeholderTextColor={appColors.xam}
 					secureTextEntry={props?.secureTextEntry}
 					editable={!props?.disabled}
 					multiline={props?.multiLine}
@@ -99,7 +99,7 @@ export const AppInput = (props: IAppInputProps) => {
 const styles = StyleSheet.create({
 	textInput: {
 		height: 48,
-		borderColor: appColors.border,
+		borderColor: appColors.xam,
 		borderWidth: 1,
 		borderRadius: 8,
 		paddingHorizontal: 12,
@@ -112,9 +112,9 @@ const styles = StyleSheet.create({
 	input: {
 		// marginLeft: 20,
 		flex: 1,
-		color: appColors.black
+		color: appColors.den
 	},
-	label: { marginBottom: 8, marginRight: 5, color: appColors.black },
+	label: { marginBottom: 8, marginRight: 5, color: appColors.den },
 	error: { marginTop: 8, marginLeft: 10 },
 	labelWrapper: { flexDirection: 'row' },
 	icon: { width: 24, height: 24, resizeMode: 'contain' },

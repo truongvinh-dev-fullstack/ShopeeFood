@@ -1,4 +1,4 @@
-package com.shopeefood
+package com.vinhtt.shopeefood
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

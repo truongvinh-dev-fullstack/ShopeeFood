@@ -1,4 +1,4 @@
-package com.shopeefood
+package com.vinhtt.shopeefood
 
 import android.app.Application
 import com.facebook.react.PackageList

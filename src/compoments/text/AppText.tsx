@@ -23,9 +23,10 @@ export type AppTextProps = {
 
 export const AppText = (props: TextProps) => {
 	console.log("props: ", props)
+	let fontSizeProp = props?.style?.fontSize ?  props?.style?.fontSize : 14
 	const customStyle = {
-		lineHeight: appFontSizes["small"] + 6,
-		fontSize: appFontSizes["small"],
+		lineHeight: fontSizeProp + 6,
+		fontSize: fontSizeProp,
 		color: 'black',
 		fontWeight: '400',
 		fontFamily: 'Cabin-Medium',

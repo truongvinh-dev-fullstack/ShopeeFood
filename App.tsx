@@ -5,7 +5,7 @@
  * @format
  */
 
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {StyleSheet, Text, useColorScheme, View} from 'react-native';
 import {SafeAreaProvider, SafeAreaView} from 'react-native-safe-area-context';
 
@@ -24,9 +24,6 @@ import Toast, {
 } from 'react-native-toast-message';
 import {appColors} from './src/constants/color';
 import RootNavigator from './src/routers/RootNavigator';
-import FastImage from 'react-native-fast-image';
-import {images} from './src/assets/images';
-import {AppText} from './src/compoments/text/AppText';
 
 export const toastConfig = {
   success: (props: React.JSX.IntrinsicAttributes & BaseToastProps) => (
@@ -54,72 +51,28 @@ export const toastConfig = {
   // ),
 };
 
+interface ViewTextAnimatedProps {
+  text: string;
+  delay: number;
+  duration: number;
+  damping: number;
+}
+
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme();
-
-  const [allowOpenApp, setAllowOpenApp] = useState(false);
-
-  useEffect(() => {
-    fetchData()
-  },[])
-
-  const fetchData = () => {
-    setTimeout(() => {
-      setAllowOpenApp(true)
-    },1500)
-  }
-
-
-  if (!allowOpenApp) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <FastImage resizeMode='cover' source={images.shoppefood} style={styles.image} />
-      </SafeAreaView>
-    );
-  }
-
   return (
     <SafeAreaProvider>
-      <NavigationContainer
-        theme={isDarkMode === 'dark' ? DarkTheme : DefaultTheme}
-        ref={navigationRef}>
-        <LoadingProvider>
-          <RootNavigator />
-          <Spinner />
-          <Toast config={toastConfig} />
-        </LoadingProvider>
-      </NavigationContainer>
+        <NavigationContainer
+          theme={isDarkMode === 'dark' ? DarkTheme : DefaultTheme}
+          ref={navigationRef}>
+          <LoadingProvider>
+            <RootNavigator />
+            <Spinner />
+            <Toast config={toastConfig} />
+          </LoadingProvider>
+        </NavigationContainer>
     </SafeAreaProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-  container: {
-    flex: 1,
-    backgroundColor: appColors.trangNhat,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  image: {
-    width: 150,
-    height: 150,
-  },
-});
 
 export default App;

@@ -13,7 +13,7 @@ import {textStyles} from '../../themes/TextStyles';
 import {goBack} from '../../routers/NavigationService';
 import AppIcon from '../icons/Icon';
 import {appColors} from '../../constants/color';
-import Ionicons from "react-native-vector-icons/Ionicons";
+import Ionicons from 'react-native-vector-icons/Ionicons';
 // import AppSegmentedControl, { AppSegmentedControlProps } from '../segmentedControl'
 import _ from 'lodash';
 
@@ -56,13 +56,6 @@ export const Header: React.FC<HeaderProps> = React.memo(
     return (
       <View style={styles.container}>
         <View style={[styles.viewHeader]}>
-			{IconLeft ? 
-			<TouchableOpacity>
-			  {IconLeft}
-            </TouchableOpacity>
-			: null }
-     
-
           {iconLeft ? (
             <AppIcon
               onPress={onIconLeftPress}
@@ -71,6 +64,8 @@ export const Header: React.FC<HeaderProps> = React.memo(
             />
           ) : hasBack ? (
             <AppIcon onPress={onBack} source={icons.ic_chevron_left} />
+          ) : IconLeft ? (
+            <TouchableOpacity>{IconLeft}</TouchableOpacity>
           ) : (
             <View style={{width: 1}} />
           )}

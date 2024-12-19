@@ -4,4 +4,8 @@ export const icons = {
 	ic_bell: require('./appIcons/bell.png'),
 	ic_chevron_down: require('./appIcons/chevron_down.png'),
 	ic_chevron_up: require('./appIcons/chevron_up.png'),
+	shopee: require('./appIcons/shopee.png'),
+	google: require('./appIcons/google.png'),
+	facebook: require('./appIcons/facebook.png'),
+	apple: require('./appIcons/apple.png'),
 }

@@ -1,56 +1,63 @@
 import React, {memo, useEffect, useRef, useState} from 'react';
-import {
-  View,
-  StyleSheet,
-} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import {AppText} from '../../compoments/text/AppText';
 import {appColors} from '../../constants/color';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import FastImage from 'react-native-fast-image';
 import {images} from '../../assets/images';
 
-import Animated, { FadeInRight, FadeInUp } from 'react-native-reanimated';
-import { appConfig } from '../../constants/AppConfig';
-import { navigate } from '../../routers/NavigationService';
-import { RouteNames } from '../../routers/RouteNames';
+import Animated, {FadeInRight, FadeInUp} from 'react-native-reanimated';
+import {appConfig} from '../../constants/AppConfig';
+import {navigate} from '../../routers/NavigationService';
+import {RouteNames} from '../../routers/RouteNames';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 
 interface ViewTextAnimatedProps {
-    text: string;
-    delay: number;
-    duration: number;
-    damping: number;
-  }
+  text: string;
+  delay: number;
+  duration: number;
+  damping: number;
+}
 
 const WelcomeScreen = () => {
-  useEffect(() => {
-    setTimeout(() => {
-        navigate(RouteNames.LOGIN)
-    },3500)
-  },
-   []);
+  const [animate, setAnimate] = useState(false);
 
-   const ViewTextAnimated = memo(
-      ({text, delay, duration, damping}: ViewTextAnimatedProps) => {
-        const animationConfig = FadeInRight.withInitialValues({
-          opacity: 0,
-          transform: [{translateX: appConfig.width / 2 + 100}],
-        })
-          .delay(delay)
-          .duration(duration)
-          .springify()
-          .damping(damping);
-  
-        return (
-          <Animated.View entering={animationConfig}>
-            <AppText style={styles.textLogo}>{text}</AppText>
-          </Animated.View>
-        );
-      },
-    );
+  useFocusEffect(
+    React.useCallback(() => {
+      setAnimate(true);
+      const timeout = setTimeout(() => {
+        navigate(RouteNames.LOGIN);
+      }, 3500);
+
+      return () => {
+        setAnimate(false);
+        clearTimeout(timeout);
+      }; // Clear timeout khi màn hình mất focus
+    }, []),
+  );
+  const ViewTextAnimated = memo(
+    ({text, delay, duration, damping}: ViewTextAnimatedProps) => {
+      const animationConfig = FadeInRight.withInitialValues({
+        opacity: 0,
+        transform: [{translateX: appConfig.width / 2 + 100}],
+      })
+        .delay(delay)
+        .duration(duration)
+        .springify()
+        .damping(damping);
+
+      return (
+        <Animated.View entering={animationConfig}>
+          <AppText style={styles.textLogo}>{text}</AppText>
+        </Animated.View>
+      );
+    },
+  );
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.bodyFlastScreen}>
+        {animate ?
         <Animated.View
           entering={FadeInUp.withInitialValues({
             opacity: 0,
@@ -63,7 +70,7 @@ const WelcomeScreen = () => {
             source={images.shopeeFoodIcon}
             style={styles.image}
           />
-        </Animated.View>
+        </Animated.View> : null}
         <View style={styles.flex_row}>
           {['S', 'h', 'o', 'p', 'p', 'e', ' ', 'F', 'o', 'o', 'd'].map(
             (item, index) => {

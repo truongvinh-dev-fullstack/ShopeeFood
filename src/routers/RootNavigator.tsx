@@ -1,13 +1,15 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {createStackNavigator} from '@react-navigation/stack';
+// import {createStackNavigator} from '@react-navigation/stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {RootStackParamList} from './RootStackParamList ';
 import {RouteNames} from './RouteNames';
 import LoginScreen from '../screen/auth/login';
 import {AppText} from '../compoments/text/AppText';
 import {View} from 'react-native';
 import WelcomeScreen from '../screen/welcome/welcome';
+import BottomTabScreen from './BottomTabNavigator';
 
-const {Navigator, Screen} = createStackNavigator<RootStackParamList>();
+const {Navigator, Screen} = createNativeStackNavigator<RootStackParamList>();
 export default function RootNavigator() {
   const [initialRouteName, setInitialRouteName] =
     useState<keyof RootStackParamList>();
@@ -15,7 +17,7 @@ export default function RootNavigator() {
 
   return (
     <Navigator
-      // screenOptions={{ headerShown: false, gestureEnabled: false }}
+      screenOptions={{ headerShown: false}}
       initialRouteName={initialRouteName}>
       <Screen
         options={{
@@ -37,7 +39,7 @@ export default function RootNavigator() {
         name={RouteNames.LOGIN}
         component={LoginScreen}
       />
-      {/* <Screen name={RouteNames.MAIN} component={BottomTabScreen} /> */}
+      <Screen name={RouteNames.MAIN} component={BottomTabScreen} />
     </Navigator>
   );
 }

@@ -1,4 +1,5 @@
 export const icons = {
+	homeIcon: require('./menuIcons/homeIcon.jpg'),
 	ic_chevron_right: require('./appIcons/chevron-right.png'),
 	ic_chevron_left: require('./appIcons/chevron-left.png'),
 	ic_bell: require('./appIcons/bell.png'),
@@ -8,4 +9,5 @@ export const icons = {
 	google: require('./appIcons/google.png'),
 	facebook: require('./appIcons/facebook.png'),
 	apple: require('./appIcons/apple.png'),
+	
 }

@@ -30,6 +30,8 @@ import Animated, {
   withDelay,
   withTiming,
 } from 'react-native-reanimated';
+import { navigate } from '../../routers/NavigationService';
+import { RouteNames } from '../../routers/RouteNames';
 
 const LoginScreen = () => {
   const [form, setForm] = useState({
@@ -71,11 +73,12 @@ const LoginScreen = () => {
   const handleSubmit = () => {
     const {phone, password} = form;
 
-    if (!phone || !password) {
-      showToast('error', 'Cần điền đầy đủ thông tin');
-      Alert.alert('Error', 'All fields are required.');
-      return;
-    }
+    // if (!phone) {
+    //   showToast('error', 'Cần điền đầy đủ thông tin');
+    //   // Alert.alert('Error', 'All fields are required.');
+    //   return;
+    // }
+    navigate(RouteNames.MAIN)
   };
 
   const phuonThucKhacAnimed = FadeInDown.withInitialValues({

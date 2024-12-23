@@ -10,7 +10,7 @@ import DonHangScreen from '../screen/bottomTab/donHang';
 import YeuThichScreen from '../screen/bottomTab/yeuThich';
 import TaiKhoanScreen from '../screen/bottomTab/taiKhoan';
 import ThongBaoScreen from '../screen/bottomTab/thongBao';
-import { appColors } from '../constants/color';
+import {appColors} from '../constants/color';
 
 const Tab = createBottomTabNavigator();
 
@@ -18,8 +18,12 @@ const BottomTabScreen = () => {
   const isFocused = useIsFocused();
   let {params}: any = useRoute();
 
-  const screens = [
-    // { name: ProjectName.DASH_BOARD_DIRECTOR, component: DashboardDirector },
+  const tabs = [
+    {route: TabNames.HomeScreen,component: HomeScreen, name: 'Home', icon: 'restaurant'},
+    {route: TabNames.DonHangScreen,component: DonHangScreen, name: 'Đơn hàng', icon: 'document-text'},
+    {route: TabNames.YeuThichScreen,component: YeuThichScreen, name: 'Thích', icon: 'heart'},
+    {route: TabNames.ThongBaoScreen,component: ThongBaoScreen, name: 'Thông báo', icon: 'notifications'},
+    {route: TabNames.TaiKhoanScreen,component: TaiKhoanScreen, name: 'Tôi', icon: 'person'},
   ];
 
   useEffect(() => {
@@ -35,114 +39,34 @@ const BottomTabScreen = () => {
         headerShown: false,
         tabBarStyle: {
           height: Platform.OS == 'ios' ? 80 : 70,
+          paddingTop: 5
         },
         lazy: true,
         tabBarLabelStyle: $tabBarLabel,
         tabBarItemStyle: $tabBarItem,
       }}>
-      <Tab.Screen
-        name={TabNames.HomeScreen}
-        component={HomeScreen}
-        options={{
-          // tabBarLabel: ({ focused }) => <BottomTabLabel focused={focused} content={'Home'} />,
-          // tabBarIcon: ({focused}: {focused: boolean}) => (
-          //   <BottomTabButton focused={focused} name="restaurant" />
-          // ),
-          tabBarButton: (data) => {
-            console.log("data:", data)
-            let focused = data.accessibilityState?.selected
-            return(
-              <BottomTabButton focused={focused} name="restaurant" label="Home" />
-            )
-          }
-        }}
-      />
-
-      <Tab.Screen
-        name={TabNames.DonHangScreen}
-        component={DonHangScreen}
-        options={{
-          // tabBarLabel: ({ focused }) => <BottomTabLabel focused={focused} content={'Đơn hàng'} />,
-          // tabBarIcon: ({focused}: {focused: boolean}) => (
-          //   <BottomTabButton focused={focused} name={'document-text'}  />
-          // ),
-          tabBarButton: (data) => {
-            let focused = data.accessibilityState?.selected
-            return(
-              <BottomTabButton focused={focused} name="document-text" label="Đơn hàng" />
-            )
-          }
-        }}
-      />
-
-      <Tab.Screen
-        name={TabNames.YeuThichScreen}
-        component={YeuThichScreen}
-        options={{
-          // tabBarLabel: ({ focused }) => <BottomTabLabel focused={focused} content={'Thích'} />,
-          // tabBarIcon: ({focused}: {focused: boolean}) => (
-          //   <BottomTabButton focused={focused} name={'heart'} />
-          // ),
-          tabBarButton: (data) => {
-            let focused = data.accessibilityState?.selected
-            return(
-              <BottomTabButton focused={focused} name="heart" label="Thích" />
-            )
-          }
-        }}
-      />
-
-      <Tab.Screen
-        name={TabNames.ThongBaoScreen}
-        component={ThongBaoScreen}
-        options={{
-          // tabBarLabel: ({ focused }) => <BottomTabLabel focused={focused} content={'Thông báo'} />,
-          // tabBarIcon: ({focused}: {focused: boolean}) => (
-          //   <BottomTabButton focused={focused} name={'notifications'} />
-          // ),
-          tabBarButton: (data) => {
-            let focused = data.accessibilityState?.selected
-            return(
-              <BottomTabButton focused={focused} name="notifications" label="Thông báo" />
-            )
-          }
-        }}
-      />
-
-      <Tab.Screen
-        name={TabNames.TaiKhoanScreen}
-        component={TaiKhoanScreen}
-        options={{
-          // tabBarLabel: ({ focused }) => <BottomTabLabel focused={focused} content={'Tôi'} />,
-          // tabBarIcon: ({focused}: {focused: boolean}) => (
-          //   <BottomTabButton focused={focused} name={'person'} />
-          // ),
-          tabBarButton: (data) => {
-            let focused = data.accessibilityState?.selected
-            return(
-              <BottomTabButton focused={focused} name="person" label="Tôi" />
-            )
-          }
-        }}
-      />
-
-      {/* {screens?.map((item, i) => {
-				return (
-					<Tab.Screen
-						key={i}
-						name={item?.name}
-						component={item?.component}
-						options={{
-							tabBarItemStyle: { display: 'none' },
-							tabBarLabel: ({ focused }) => <BottomTabLabel focused={focused} content={''} />,
-							tabBarIcon: ({ focused }: { focused: boolean }) => (
-								<BottomTabButton source={icons.ic_menu_work} focused={focused} />
-							),
-							tabBarHideOnKeyboard: true,
-						}}
-					/>
-				)
-			})} */}
+      {tabs?.map(item => {
+        return (
+          <Tab.Screen
+            key={item.route}
+            name={item.route}
+            component={item.component}
+            options={{
+              // tabBarLabel: ({focused}) => (
+              //   <BottomTabLabel focused={focused} content={item.name} />
+              // ),
+              // tabBarIcon: ({focused}: {focused: boolean}) => (
+              //   <BottomTabButton focused={focused} name={item.icon} />
+              // ),
+              tabBarButton: (props) => {
+                return(
+                  <BottomTabButton {...props} item={item} />
+                )
+              },
+            }}
+          />
+        );
+      })}
     </Tab.Navigator>
   );
 };

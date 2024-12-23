@@ -1,32 +1,37 @@
 import React from 'react';
-import FastImage, {Source} from 'react-native-fast-image';
 import {StyleSheet, View} from 'react-native';
 import {appColors} from '../../constants/color';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {AppText} from '../../compoments/text/AppText';
 import {textStyles} from '../../themes/TextStyles';
+import { appConfig } from '../../constants/AppConfig';
 
 type TabButtonPropsType = {
-  source?: Source;
+  label?: string;
   name: string;
   focused?: boolean;
 };
 
+const tabWidth = appConfig.width / 5
+
 export const BottomTabButton: React.FC<TabButtonPropsType> = React.memo(
-  ({source, name, focused}) => {
+  ({label, name, focused}) => {
     let tintColor: any = focused ? appColors.cam : appColors.xam;
     return (
-      <View style={[]}>
-        <Ionicons name={name} size={25} color={tintColor} />
-        {/* <AppText
-          allowFontScaling={false}
-          style={{
-            ...textStyles.textNormalMedium,
-            color: focused ? appColors.cam : appColors.xam,
-            fontSize: 13,
-          }}>
-          vinh
-        </AppText> */}
+      <View style={style.container}>
+        <View style={{alignItems: 'center', justifyContent: 'center'}}>
+          <Ionicons name={name} size={25} color={tintColor} />
+          <AppText
+            allowFontScaling={false}
+            style={{
+              ...textStyles.textNormalMedium,
+              color: focused ? appColors.cam : appColors.xam,
+              fontSize: 13,
+            }}>
+            {label}
+          </AppText>
+        </View>
+        
         {/* <FastImage
 				source={source}
 				style={[style.icon]}
@@ -39,13 +44,9 @@ export const BottomTabButton: React.FC<TabButtonPropsType> = React.memo(
 
 const style = StyleSheet.create({
   container: {
-    width: 60,
-    height: 60,
-    borderWidth: 4,
-    borderRadius: 30,
-    borderColor: '#E9F0FE',
-    alignItems: 'center',
-    justifyContent: 'center',
+    width: tabWidth,
+    borderRightWidth: 1,
+    borderColor: appColors.cam,
   },
   icon: {
     height: 30,

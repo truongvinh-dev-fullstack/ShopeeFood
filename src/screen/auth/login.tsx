@@ -78,7 +78,8 @@ const LoginScreen = () => {
     //   // Alert.alert('Error', 'All fields are required.');
     //   return;
     // }
-    navigate(RouteNames.MAIN)
+    // navigate(RouteNames.MAIN)
+    navigate(RouteNames.MAIN_QUANLY)
   };
 
   const phuonThucKhacAnimed = FadeInDown.withInitialValues({

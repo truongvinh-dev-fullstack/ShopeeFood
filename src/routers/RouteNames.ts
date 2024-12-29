@@ -1,7 +1,8 @@
 export enum RouteNames {
 	WELCOME='WELCOME',
 	LOGIN = 'LOGIN',
-	MAIN = 'MAIN'
+	MAIN = 'MAIN',
+	MAIN_QUANLY = 'MAIN_QUANLY'
 }
 
 export enum TabNames {
@@ -9,5 +10,6 @@ export enum TabNames {
 	YeuThichScreen = 'YeuThichScreen',
 	DonHangScreen = 'DonHangScreen',
 	TaiKhoanScreen = 'TaiKhoanScreen',
-	ThongBaoScreen = "ThongBaoScreen"
+	ThongBaoScreen = "ThongBaoScreen",
+	QuanLyCuaHang = "QuanLyCuaHang"
 }

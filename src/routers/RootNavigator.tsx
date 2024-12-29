@@ -8,6 +8,7 @@ import {AppText} from '../compoments/text/AppText';
 import {View} from 'react-native';
 import WelcomeScreen from '../screen/welcome/welcome';
 import BottomTabScreen from './BottomTabNavigator';
+import BottomTabQuanLy from './BottomTabNavigatorQuanLy';
 
 const {Navigator, Screen} = createNativeStackNavigator<RootStackParamList>();
 export default function RootNavigator() {
@@ -40,6 +41,7 @@ export default function RootNavigator() {
         component={LoginScreen}
       />
       <Screen name={RouteNames.MAIN} component={BottomTabScreen} />
+      <Screen name={RouteNames.MAIN_QUANLY} component={BottomTabQuanLy} />
     </Navigator>
   );
 }

@@ -9,5 +9,5 @@ export const icons = {
 	google: require('./appIcons/google.png'),
 	facebook: require('./appIcons/facebook.png'),
 	apple: require('./appIcons/apple.png'),
-	
+	ic_cancel: require('./appIcons/ic_cancel.png'),
 }

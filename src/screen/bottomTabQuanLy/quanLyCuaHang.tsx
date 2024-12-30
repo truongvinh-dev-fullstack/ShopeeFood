@@ -5,22 +5,29 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
+  FlatList,
+  ListRenderItem,
 } from 'react-native';
 import {appColors} from '../../constants/color';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
 import {appConfig} from '../../constants/AppConfig';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import {
+  useFocusEffect,
+  useIsFocused,
+  useNavigation,
+} from '@react-navigation/native';
 import {AppText} from '../../compoments/text/AppText';
 import {AppInput} from '../../compoments/textInput/TextInput';
 import {Header} from '../../compoments/header';
-import {StoreData} from './type';
+import {CuaHang, StoreData} from './type';
 import {appStyles} from '../../themes/AppStyles';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import firestore from '@react-native-firebase/firestore';
 import Button from '../../compoments/button';
 import {AppModal} from '../../compoments/modal';
+import FastImage from 'react-native-fast-image';
 
 const QuanLyCuaHang = () => {
   const [modalThemCuaHang, setModalThemCuaHang] = useState(false);
@@ -42,11 +49,31 @@ const QuanLyCuaHang = () => {
     createdAt: new Date(),
   });
 
-  useFocusEffect(
-    React.useCallback(() => {
-      return () => {}; // Clear timeout khi màn hình mất focus
-    }, []),
-  );
+  const isFocus = useIsFocused();
+
+  const [listCuaHang, setListCuaHang] = useState<Array<CuaHang>>([]);
+
+  useEffect(() => {
+    getListCuaHang();
+    return () => {
+      setListCuaHang([]);
+    };
+  }, [isFocus]);
+
+  const getListCuaHang = async () => {
+    try {
+      const querySnapshot = await firestore().collection('Restaurants').get();
+      if (!querySnapshot.empty) {
+        const listCuaHang: any = querySnapshot.docs.map(doc => ({
+          ...doc.data(),
+        }));
+        console.log('listCuaHang: ', listCuaHang);
+        setListCuaHang(listCuaHang);
+      }
+    } catch (error) {
+      console.log('Lỗi lấy dữ liệu cửa hàng');
+    }
+  };
 
   const themLichLamViec = () => {
     setStoreData({
@@ -122,12 +149,48 @@ const QuanLyCuaHang = () => {
     }
   };
 
+  const ViewItem: ListRenderItem<CuaHang> = ({item, index}) => {
+    return (
+      <View style={appStyles.flex_row}>
+        <FastImage
+          source={{uri: item.images}}
+          style={{width: 100, height: 75}}
+          resizeMode="contain"
+        />
+        <View style={{alignSelf: 'stretch', gap: 5}}>
+          <AppText style={styles.text_header}>{item.name}</AppText>
+          <AppText numberOfLines={2}>{item.address}</AppText>
+          <View style={[appStyles.flex_row, {gap: 5}]}>
+            <Ionicons name="star" size={12} color={appColors.cam} />
+            <AppText>{item.rating}</AppText>
+          </View>
+        </View>
+      </View>
+    );
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <Header title="Quản lý cửa hàng" />
       <View style={styles.body}>
         <ScrollView contentContainerStyle={appStyles.gap_10}>
-          <Button label="Thêm mới" onPress={() => setModalThemCuaHang(true)} />
+          <View style={appStyles.flex_between}>
+            <AppText>Danh sách cửa hàng</AppText>
+            <View>
+              <Button
+                style={styles.btn_themMoi}
+                label="Thêm mới"
+                onPress={() => setModalThemCuaHang(true)}
+              />
+            </View>
+          </View>
+          <FlatList
+            data={listCuaHang}
+            renderItem={ViewItem}
+            key={'listCuaHang'}
+            keyExtractor={(item, index) => 'listCuaHang' + item?.restaurantId}
+            contentContainerStyle={{gap: 12}}
+          />
         </ScrollView>
       </View>
 
@@ -170,10 +233,46 @@ const QuanLyCuaHang = () => {
                   />
                 </TouchableOpacity>
               </View>
+              <View></View>
+              <AppText>Vị trí địa lý</AppText>
+              <View style={[appStyles.box_item, appStyles.flex_between]}>
+                <View style={{width: '48%'}}>
+                  <AppInput
+                    label="Latitude"
+                    value={
+                      storeData?.location?._latitude
+                        ? storeData?.location?._latitude.toString()
+                        : ''
+                    }
+                    onChangeText={text => {
+                      let data: any = {};
+                      if (storeData?.location) data = {...storeData?.location};
+                      data._latitude = text;
+                      setStoreData({...storeData, location: data});
+                    }}
+                  />
+                </View>
+                <View style={{width: '48%'}}>
+                  <AppInput
+                    label="Longitude"
+                    value={
+                      storeData?.location?._longitude
+                        ? storeData?.location?._longitude.toString()
+                        : ''
+                    }
+                    onChangeText={text => {
+                      let data: any = {};
+                      if (storeData?.location) data = {...storeData?.location};
+                      data._longitude = text;
+                      setStoreData({...storeData, location: data});
+                    }}
+                  />
+                </View>
+              </View>
               {storeData.openingHours?.map((item, index) => {
                 return (
                   <View style={appStyles.box_item} key={'openingHours' + index}>
-                    <View style={appStyles.flex_between_}>
+                    <View style={appStyles.flex_between}>
                       <AppText>Ngày làm việc</AppText>
                       <TouchableOpacity
                         style={index == 0 ? {display: 'none'} : {}}
@@ -269,6 +368,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     gap: 12,
     paddingVertical: 16,
+  },
+  btn_themMoi: {
+    height: 40,
+    width: 100,
+  },
+  text_header: {
+    fontSize: 16,
+    fontWeight: '700',
   },
 });
 

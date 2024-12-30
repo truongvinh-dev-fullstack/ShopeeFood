@@ -11,5 +11,6 @@ export enum TabNames {
 	DonHangScreen = 'DonHangScreen',
 	TaiKhoanScreen = 'TaiKhoanScreen',
 	ThongBaoScreen = "ThongBaoScreen",
-	QuanLyCuaHang = "QuanLyCuaHang"
+	QuanLyCuaHang = "QuanLyCuaHang",
+	ChiTietCuaHang = 'ChiTietCuaHang'
 }

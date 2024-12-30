@@ -9,7 +9,7 @@ export const appStyles = StyleSheet.create({
         gap: 12,
         alignItems: 'center'
     },
-    flex_between_: {
+    flex_between: {
         flexDirection: 'row',
         gap: 12,
         alignItems: 'center',

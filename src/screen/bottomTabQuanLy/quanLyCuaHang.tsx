@@ -28,6 +28,8 @@ import firestore from '@react-native-firebase/firestore';
 import Button from '../../compoments/button';
 import {AppModal} from '../../compoments/modal';
 import FastImage from 'react-native-fast-image';
+import { navigate } from '../../routers/NavigationService';
+import { TabNames } from '../../routers/RouteNames';
 
 const QuanLyCuaHang = () => {
   const [modalThemCuaHang, setModalThemCuaHang] = useState(false);
@@ -67,7 +69,6 @@ const QuanLyCuaHang = () => {
         const listCuaHang: any = querySnapshot.docs.map(doc => ({
           ...doc.data(),
         }));
-        console.log('listCuaHang: ', listCuaHang);
         setListCuaHang(listCuaHang);
       }
     } catch (error) {
@@ -151,7 +152,9 @@ const QuanLyCuaHang = () => {
 
   const ViewItem: ListRenderItem<CuaHang> = ({item, index}) => {
     return (
-      <View style={appStyles.flex_row}>
+      <TouchableOpacity style={appStyles.flex_row} onPress={() => navigate(TabNames.ChiTietCuaHang,{
+        item: item
+      })}>
         <FastImage
           source={{uri: item.images}}
           style={{width: 100, height: 75}}
@@ -165,7 +168,7 @@ const QuanLyCuaHang = () => {
             <AppText>{item.rating}</AppText>
           </View>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
 

@@ -28,31 +28,39 @@ import firestore from '@react-native-firebase/firestore';
 import Button from '../../compoments/button';
 import {AppModal} from '../../compoments/modal';
 import FastImage from 'react-native-fast-image';
-import { Screen } from '../../compoments/screen/screen';
-import { CuaHang } from '../bottomTabQuanLy/type';
+import {Screen} from '../../compoments/screen/screen';
+import {CuaHang} from '../bottomTabQuanLy/type';
+import {PagerViewLayout} from '../../compoments/layouts/PagerViewLayout';
+import {ThucDon} from './components/thucDon';
+
 
 const ChiTietCuaHang = () => {
   const isFocus = useIsFocused();
 
-  let {params} : any = useRoute()
+  let {params}: any = useRoute();
 
-  const [cuaHang, setCuaHang] = useState<CuaHang | null>()
+  const [cuaHang, setCuaHang] = useState<CuaHang | null>();
 
+  const segmentData = ['Thực đơn', 'Đánh giá'];
 
   useEffect(() => {
+    fetchData();
     return () => {
-        setCuaHang(null)
+      setCuaHang(null);
     };
   }, [isFocus]);
 
   const fetchData = () => {
-    setCuaHang(params?.item)
-  }
-
+    setCuaHang(params?.item);
+  };
 
   return (
     <Screen>
-
+      <Header hasBack title={cuaHang?.name} />
+      <PagerViewLayout segmentData={segmentData}>
+        <ThucDon key={"0"} cuaHang={params?.item} />
+        <View  key={"1"}></View>
+      </PagerViewLayout>
     </Screen>
   );
 };

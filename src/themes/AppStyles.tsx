@@ -33,5 +33,27 @@ export const appStyles = StyleSheet.create({
     viewBodyModal: {
         gap: 12,
         maxHeight: appConfig.height * 0.8
+    },
+    dropDownContainerStyle: {
+		borderColor: appColors.nau,
+		backgroundColor: appColors.xamNhat,
+		borderTopWidth: 0,
+		zIndex: 205,
+		position: 'absolute',
+		top: 50,
+	},
+	dropDownContainerTopStyle: {
+		borderColor: appColors.nau,
+		backgroundColor: appColors.xamNhat,
+		borderTopWidth: 0,
+		zIndex: 205,
+	},
+	dropDownPicker: {
+		borderColor: appColors.xam,
+		backgroundColor: appColors.trang,
+		zIndex: 203,
+	},
+    flex1: {
+        flex: 1
     }
 })

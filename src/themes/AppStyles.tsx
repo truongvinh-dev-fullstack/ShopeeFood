@@ -55,5 +55,9 @@ export const appStyles = StyleSheet.create({
 	},
     flex1: {
         flex: 1
+    },
+    imageBannerCuaHang: {
+        width: appConfig.width,
+        height: appConfig.width * 0.5
     }
 })

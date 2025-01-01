@@ -84,6 +84,7 @@ export const ThucDon: React.FC<ThucDonProps> = ({cuaHang}) => {
   );
 
   const getListMonAn = async () => {
+    console.log("Vao thuc don")
     try {
       const querySnapshot = await firestore()
         .collection('Menu')
@@ -230,9 +231,9 @@ export const ThucDon: React.FC<ThucDonProps> = ({cuaHang}) => {
         <FastImage
           source={{uri: item.images}}
           style={{width: 100, height: 75}}
-          resizeMode="contain"
+          resizeMode='stretch'
         />
-        <View style={{alignSelf: 'stretch', gap: 5}}>
+        <View style={{alignSelf: 'stretch', gap: 5, flex: 1}}>
           <AppText adjustsFontSizeToFit={true} numberOfLines={2} style={[styles.text_header, appStyles.flex1]}>{item.name}</AppText>
           <AppText numberOfLines={2}>{item.description}</AppText>
           {/* <View style={[appStyles.flex_row, {gap: 5}]}>
@@ -471,5 +472,6 @@ const styles = StyleSheet.create({
   text_header: {
     fontSize: 16,
     fontWeight: '700',
+    width: '100%'
   },
 });

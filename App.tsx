@@ -24,6 +24,7 @@ import Toast, {
 } from 'react-native-toast-message';
 import {appColors} from './src/constants/color';
 import RootNavigator from './src/routers/RootNavigator';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 
 export const toastConfig = {
   success: (props: React.JSX.IntrinsicAttributes & BaseToastProps) => (
@@ -51,17 +52,11 @@ export const toastConfig = {
   // ),
 };
 
-interface ViewTextAnimatedProps {
-  text: string;
-  delay: number;
-  duration: number;
-  damping: number;
-}
-
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme();
   return (
     <SafeAreaProvider>
+      <GestureHandlerRootView>
         <NavigationContainer
           theme={isDarkMode === 'dark' ? DarkTheme : DefaultTheme}
           ref={navigationRef}>
@@ -71,6 +66,7 @@ function App(): React.JSX.Element {
             <Toast config={toastConfig} />
           </LoadingProvider>
         </NavigationContainer>
+      </GestureHandlerRootView>
     </SafeAreaProvider>
   );
 }

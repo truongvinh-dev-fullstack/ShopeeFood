@@ -28,8 +28,8 @@ import firestore from '@react-native-firebase/firestore';
 import Button from '../../compoments/button';
 import {AppModal} from '../../compoments/modal';
 import FastImage from 'react-native-fast-image';
-import { navigate } from '../../routers/NavigationService';
-import { TabNames } from '../../routers/RouteNames';
+import {navigate} from '../../routers/NavigationService';
+import {TabNames} from '../../routers/RouteNames';
 
 const QuanLyCuaHang = () => {
   const [modalThemCuaHang, setModalThemCuaHang] = useState(false);
@@ -152,9 +152,13 @@ const QuanLyCuaHang = () => {
 
   const ViewItem: ListRenderItem<CuaHang> = ({item, index}) => {
     return (
-      <TouchableOpacity style={appStyles.flex_row} onPress={() => navigate(TabNames.ChiTietCuaHang,{
-        item: item
-      })}>
+      <TouchableOpacity
+        style={appStyles.flex_row}
+        onPress={() =>
+          navigate(TabNames.chiTietCuaHangQuanLy, {
+            item: item,
+          })
+        }>
         <FastImage
           source={{uri: item.images}}
           style={{width: 100, height: 75}}
@@ -176,25 +180,23 @@ const QuanLyCuaHang = () => {
     <SafeAreaView style={styles.container}>
       <Header title="Quản lý cửa hàng" />
       <View style={styles.body}>
-        <ScrollView contentContainerStyle={appStyles.gap_10}>
-          <View style={appStyles.flex_between}>
-            <AppText>Danh sách cửa hàng</AppText>
-            <View>
-              <Button
-                style={styles.btn_themMoi}
-                label="Thêm mới"
-                onPress={() => setModalThemCuaHang(true)}
-              />
-            </View>
+        <View style={appStyles.flex_between}>
+          <AppText>Danh sách cửa hàng</AppText>
+          <View>
+            <Button
+              style={styles.btn_themMoi}
+              label="Thêm mới"
+              onPress={() => setModalThemCuaHang(true)}
+            />
           </View>
-          <FlatList
-            data={listCuaHang}
-            renderItem={ViewItem}
-            key={'listCuaHang'}
-            keyExtractor={(item, index) => 'listCuaHang' + item?.restaurantId}
-            contentContainerStyle={{gap: 12}}
-          />
-        </ScrollView>
+        </View>
+        <FlatList
+          data={listCuaHang}
+          renderItem={ViewItem}
+          key={'listCuaHang'}
+          keyExtractor={(item, index) => 'listCuaHang' + item?.restaurantId}
+          contentContainerStyle={{gap: 12}}
+        />
       </View>
 
       <AppModal

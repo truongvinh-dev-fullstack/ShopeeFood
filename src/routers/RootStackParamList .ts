@@ -7,4 +7,5 @@ export type RootStackParamList = {
 	[RouteNames.MAIN_QUANLY]: undefined
 
 	[TabNames.ChiTietCuaHang]: undefined
+	[TabNames.chiTietCuaHangQuanLy]: undefined
 }

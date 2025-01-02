@@ -75,7 +75,7 @@ export const ThucDon: React.FC<ThucDonProps> = ({cuaHang}) => {
     return () => {
       setModalThemMoi(false);
     };
-  }, [isFocus]);
+  }, []);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -84,7 +84,7 @@ export const ThucDon: React.FC<ThucDonProps> = ({cuaHang}) => {
   );
 
   const getListMonAn = async () => {
-    console.log("Vao thuc don")
+    console.log('Vao thuc don');
     try {
       const querySnapshot = await firestore()
         .collection('Menu')
@@ -231,10 +231,15 @@ export const ThucDon: React.FC<ThucDonProps> = ({cuaHang}) => {
         <FastImage
           source={{uri: item.images}}
           style={{width: 100, height: 75}}
-          resizeMode='stretch'
+          resizeMode="stretch"
         />
         <View style={{alignSelf: 'stretch', gap: 5, flex: 1}}>
-          <AppText adjustsFontSizeToFit={true} numberOfLines={2} style={[styles.text_header, appStyles.flex1]}>{item.name}</AppText>
+          <AppText
+            adjustsFontSizeToFit={true}
+            numberOfLines={2}
+            style={[styles.text_header, appStyles.flex1]}>
+            {item.name}
+          </AppText>
           <AppText numberOfLines={2}>{item.description}</AppText>
           {/* <View style={[appStyles.flex_row, {gap: 5}]}>
             <Ionicons name="star" size={12} color={appColors.cam} />
@@ -247,30 +252,43 @@ export const ThucDon: React.FC<ThucDonProps> = ({cuaHang}) => {
 
   return (
     <View style={styles.container}>
-      <View style={appStyles.flex_between}>
-        <View style={appStyles.flex_row}>
-          <AppText>Danh sách thực đơn</AppText>
-          <View>
-            <TouchableOpacity onPress={() => setModalThemMoi(true)}>
-              <Ionicons name="add-circle" size={25} color={appColors.xanhLa} />
-            </TouchableOpacity>
-          </View>
-        </View>
-        <View style={styles.btn}>
-          <Button
-            label="Thêm loại món"
-            onPress={() => setModalThemLoaiMon(true)}
-            style={styles.btn}
-          />
-        </View>
-      </View>
-
       <FlatList
         data={listMonAn}
         renderItem={ViewItem}
         key={'listMonAn'}
         keyExtractor={(item, index) => 'listMonAn' + item?.menuId}
         contentContainerStyle={{gap: 12}}
+        ListHeaderComponent={() => {
+          return (
+            <View style={[appStyles.flex_between, {zIndex: 100, height: 80}]}>
+              <View style={appStyles.flex_row}>
+                <AppText>Danh sách thực đơn</AppText>
+                <View>
+                  <TouchableOpacity onPress={() => setModalThemMoi(true)}>
+                    <Ionicons
+                      name="add-circle"
+                      size={25}
+                      color={appColors.xanhLa}
+                    />
+                  </TouchableOpacity>
+                </View>
+              </View>
+              <View style={styles.btn}>
+                <Button
+                  label="Thêm loại món"
+                  onPress={() => setModalThemLoaiMon(true)}
+                  style={styles.btn}
+                />
+              </View>
+            </View>
+          );
+        }}
+        stickyHeaderIndices={[0]}
+        getItemLayout={(data, index) => ({
+          length: 75,
+          offset: 75 * index,
+          index,
+        })}
       />
 
       {/* Thêm thực đơn */}
@@ -472,6 +490,6 @@ const styles = StyleSheet.create({
   text_header: {
     fontSize: 16,
     fontWeight: '700',
-    width: '100%'
+    width: '100%',
   },
 });

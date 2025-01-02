@@ -10,6 +10,7 @@ import WelcomeScreen from '../screen/welcome/welcome';
 import BottomTabScreen from './BottomTabNavigator';
 import BottomTabQuanLy from './BottomTabNavigatorQuanLy';
 import ChiTietCuaHang from '../screen/restaurants/chiTietCuaHang';
+import chiTietCuaHangQuanLy from '../screen/restaurants/chiTietCuaHangQuanLy';
 
 const {Navigator, Screen} = createNativeStackNavigator<RootStackParamList>();
 export default function RootNavigator() {
@@ -24,6 +25,7 @@ export default function RootNavigator() {
     {name: RouteNames.MAIN_QUANLY, component: BottomTabQuanLy},
 
     {name: TabNames.ChiTietCuaHang, component: ChiTietCuaHang},
+    {name: TabNames.chiTietCuaHangQuanLy, component: chiTietCuaHangQuanLy},
   ];
 
   return (

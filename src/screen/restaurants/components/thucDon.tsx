@@ -260,7 +260,7 @@ export const ThucDon: React.FC<ThucDonProps> = ({cuaHang}) => {
         contentContainerStyle={{gap: 12}}
         ListHeaderComponent={() => {
           return (
-            <View style={[appStyles.flex_between, {zIndex: 100, height: 80}]}>
+            <View style={[appStyles.flex_between, {}]}>
               <View style={appStyles.flex_row}>
                 <AppText>Danh sách thực đơn</AppText>
                 <View>

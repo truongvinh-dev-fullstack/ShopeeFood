@@ -74,6 +74,7 @@ export const ThucDon: React.FC<ThucDonProps> = ({cuaHang}) => {
     getListMonAn();
     return () => {
       setModalThemMoi(false);
+      setListLoaiMonAn([])
     };
   }, []);
 
@@ -84,7 +85,6 @@ export const ThucDon: React.FC<ThucDonProps> = ({cuaHang}) => {
   );
 
   const getListMonAn = async () => {
-    console.log('Vao thuc don');
     try {
       const querySnapshot = await firestore()
         .collection('Menu')
@@ -95,6 +95,7 @@ export const ThucDon: React.FC<ThucDonProps> = ({cuaHang}) => {
         const arrMonAn: any = querySnapshot.docs.map(doc => ({
           ...doc.data(),
         }));
+        // console.log("arrMonAn: ", arrMonAn)
         setListMonAn(arrMonAn);
       }
     } catch (error) {}
@@ -227,24 +228,21 @@ export const ThucDon: React.FC<ThucDonProps> = ({cuaHang}) => {
 
   const ViewItem: ListRenderItem<ThucDonType> = ({item, index}) => {
     return (
-      <View style={appStyles.flex_row}>
+      <View style={[appStyles.flex_row,{alignItems: 'flex-start'}]}>
         <FastImage
           source={{uri: item.images}}
           style={{width: 100, height: 75}}
           resizeMode="stretch"
         />
-        <View style={{alignSelf: 'stretch', gap: 5, flex: 1}}>
+        <View style={{ gap: 5, flex: 1}}>
           <AppText
             adjustsFontSizeToFit={true}
             numberOfLines={2}
-            style={[styles.text_header, appStyles.flex1]}>
+            style={[styles.text_header]}
+            >
             {item.name}
           </AppText>
-          <AppText numberOfLines={2}>{item.description}</AppText>
-          {/* <View style={[appStyles.flex_row, {gap: 5}]}>
-            <Ionicons name="star" size={12} color={appColors.cam} />
-            <AppText>{item.rating}</AppText>
-          </View> */}
+          <AppText numberOfLines={1}>{item.description}</AppText>
         </View>
       </View>
     );
@@ -283,12 +281,12 @@ export const ThucDon: React.FC<ThucDonProps> = ({cuaHang}) => {
             </View>
           );
         }}
-        stickyHeaderIndices={[0]}
-        getItemLayout={(data, index) => ({
-          length: 75,
-          offset: 75 * index,
-          index,
-        })}
+        // stickyHeaderIndices={[0]}
+        // getItemLayout={(data, index) => ({
+        //   length: 75,
+        //   offset: 75 * index,
+        //   index,
+        // })}
       />
 
       {/* Thêm thực đơn */}
@@ -464,6 +462,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: appColors.trang,
     paddingTop: 10,
+    paddingHorizontal: 12
   },
   bodyFlastScreen: {
     height: appConfig.height,

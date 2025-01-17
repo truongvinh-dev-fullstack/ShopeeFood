@@ -30,8 +30,10 @@ import {AppModal} from '../../compoments/modal';
 import FastImage from 'react-native-fast-image';
 import {navigate} from '../../routers/NavigationService';
 import {TabNames} from '../../routers/RouteNames';
+import CuaHangLoader from '../../compoments/contentLoader/cuaHangLoader';
 
 const QuanLyCuaHang = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const [modalThemCuaHang, setModalThemCuaHang] = useState(false);
   const [storeData, setStoreData] = useState<StoreData>({
     restaurantId: '',
@@ -70,6 +72,7 @@ const QuanLyCuaHang = () => {
           ...doc.data(),
         }));
         setListCuaHang(listCuaHang);
+        setIsLoading(false)
       }
     } catch (error) {
       console.log('Lỗi lấy dữ liệu cửa hàng');
@@ -164,9 +167,11 @@ const QuanLyCuaHang = () => {
           style={{width: 100, height: 75}}
           resizeMode="contain"
         />
-        <View style={{alignSelf: 'stretch', gap: 5}}>
-          <AppText style={styles.text_header}>{item.name}</AppText>
-          <AppText numberOfLines={2}>{item.address}</AppText>
+        <View style={{alignSelf: 'stretch', gap: 5, flex: 1}}>
+          <AppText numberOfLines={1} style={styles.text_header}>
+            {item.name}
+          </AppText>
+          <AppText numberOfLines={1}>{item.address}</AppText>
           <View style={[appStyles.flex_row, {gap: 5}]}>
             <Ionicons name="star" size={12} color={appColors.cam} />
             <AppText>{item.rating}</AppText>
@@ -190,13 +195,21 @@ const QuanLyCuaHang = () => {
             />
           </View>
         </View>
-        <FlatList
-          data={listCuaHang}
-          renderItem={ViewItem}
-          key={'listCuaHang'}
-          keyExtractor={(item, index) => 'listCuaHang' + item?.restaurantId}
-          contentContainerStyle={{gap: 12}}
-        />
+        {isLoading ? (
+          <View style={{gap: 8}}>
+            {[1, 1, 1, 1, 1, 1, 1]?.map((item, index) => {
+              return <CuaHangLoader key={"loader" + index} />;
+            })}
+          </View>
+        ) : (
+          <FlatList
+            data={listCuaHang}
+            renderItem={ViewItem}
+            key={'listCuaHang'}
+            keyExtractor={(item, index) => 'listCuaHang' + item?.restaurantId}
+            contentContainerStyle={{gap: 12}}
+          />
+        )}
       </View>
 
       <AppModal

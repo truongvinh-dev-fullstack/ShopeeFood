@@ -32,8 +32,10 @@ import Animated, {
 } from 'react-native-reanimated';
 import { navigate } from '../../routers/NavigationService';
 import { RouteNames } from '../../routers/RouteNames';
+import { useCuaHangState } from '../../hook/useCuaHangState';
 
 const LoginScreen = () => {
+    
   const [form, setForm] = useState({
     phone: '',
     password: '',

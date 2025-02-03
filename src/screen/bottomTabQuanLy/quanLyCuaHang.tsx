@@ -31,8 +31,12 @@ import FastImage from 'react-native-fast-image';
 import {navigate} from '../../routers/NavigationService';
 import {TabNames} from '../../routers/RouteNames';
 import CuaHangLoader from '../../compoments/contentLoader/cuaHangLoader';
+import {useCuaHangActions} from '../../hook/useCuaHangAction';
+import {useCuaHangState} from '../../hook/useCuaHangState';
 
 const QuanLyCuaHang = () => {
+  const {setDanhSachCuaHangRedux, setLoadingCuaHangRedux} = useCuaHangActions();
+  const {cuaHangs, loading} = useCuaHangState();
   const [isLoading, setIsLoading] = useState(true);
   const [modalThemCuaHang, setModalThemCuaHang] = useState(false);
   const [storeData, setStoreData] = useState<StoreData>({
@@ -61,21 +65,28 @@ const QuanLyCuaHang = () => {
     getListCuaHang();
     return () => {
       setListCuaHang([]);
+      setIsLoading(true);
     };
   }, [isFocus]);
 
   const getListCuaHang = async () => {
-    try {
-      const querySnapshot = await firestore().collection('Restaurants').get();
-      if (!querySnapshot.empty) {
-        const listCuaHang: any = querySnapshot.docs.map(doc => ({
-          ...doc.data(),
-        }));
-        setListCuaHang(listCuaHang);
-        setIsLoading(false)
+    if (loading) {
+      try {
+        const querySnapshot = await firestore().collection('Restaurants').get();
+        if (!querySnapshot.empty) {
+          const listCuaHang: any = querySnapshot.docs.map(doc => ({
+            ...doc.data(),
+          }));
+          setDanhSachCuaHangRedux(listCuaHang);
+          setIsLoading(false);
+          setListCuaHang(listCuaHang);
+        }
+      } catch (error) {
+        console.log('Lỗi lấy dữ liệu cửa hàng');
       }
-    } catch (error) {
-      console.log('Lỗi lấy dữ liệu cửa hàng');
+    } else {
+      setListCuaHang(cuaHangs);
+      setIsLoading(false);
     }
   };
 
@@ -127,6 +138,7 @@ const QuanLyCuaHang = () => {
           ],
           createdAt: new Date(),
         });
+        setLoadingCuaHangRedux();
       } else {
         console.log('Không có nhà hàng nào.');
         await firestore().collection('Restaurants').add(storeData);
@@ -147,6 +159,7 @@ const QuanLyCuaHang = () => {
           ],
           createdAt: new Date(),
         });
+        setLoadingCuaHangRedux();
       }
     } catch (error) {
       console.error('Lỗi khi thêm nhà hàng: ', error);
@@ -198,7 +211,7 @@ const QuanLyCuaHang = () => {
         {isLoading ? (
           <View style={{gap: 8}}>
             {[1, 1, 1, 1, 1, 1, 1]?.map((item, index) => {
-              return <CuaHangLoader key={"loader" + index} />;
+              return <CuaHangLoader key={'loader' + index} />;
             })}
           </View>
         ) : (

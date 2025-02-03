@@ -29,6 +29,7 @@ import firestore from '@react-native-firebase/firestore';
 import Toast from 'react-native-toast-message';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {Checkbox} from '../../../compoments/checkbox/checkbox';
+import {opacity} from 'react-native-reanimated/lib/typescript/Colors';
 
 type ThucDonProps = {
   cuaHang: CuaHang;
@@ -74,7 +75,7 @@ export const ThucDon: React.FC<ThucDonProps> = ({cuaHang}) => {
     getListMonAn();
     return () => {
       setModalThemMoi(false);
-      setListLoaiMonAn([])
+      setListLoaiMonAn([]);
     };
   }, []);
 
@@ -95,8 +96,17 @@ export const ThucDon: React.FC<ThucDonProps> = ({cuaHang}) => {
         const arrMonAn: any = querySnapshot.docs.map(doc => ({
           ...doc.data(),
         }));
+
+        const header = {
+          menuId: "3223424"
+        }
+
+        const scrollHeader = {
+          menuId: "32234fd24"
+        }
+
         // console.log("arrMonAn: ", arrMonAn)
-        setListMonAn(arrMonAn);
+        setListMonAn([header,scrollHeader,...arrMonAn]);
       }
     } catch (error) {}
   };
@@ -227,22 +237,59 @@ export const ThucDon: React.FC<ThucDonProps> = ({cuaHang}) => {
   };
 
   const ViewItem: ListRenderItem<ThucDonType> = ({item, index}) => {
+    if(index == 0){
+      return(
+        <View style={[
+          styles.containerViewItem, {backgroundColor : appColors.trang}
+        ]}>
+          <AppText style={styles.text_header}>{cuaHang?.name}</AppText>
+        </View>
+      )
+    }
+    if(index == 1){
+      return(
+        <View style={[
+          styles.containerViewItem, {backgroundColor : appColors.trang, zIndex: 99}
+        ]}>
+          <ScrollView horizontal>
+            {[1,1,1,1,1,1,1,1,1,1,1]?.map((item, index) => {
+              return(
+                <View key={"scrollHeader" + index}>
+                  <AppText>Món ngon</AppText>
+                </View>
+              )
+            })}
+          </ScrollView>
+        </View>
+      )
+    }
     return (
-      <View style={[appStyles.flex_row,{alignItems: 'flex-start'}]}>
-        <FastImage
-          source={{uri: item.images}}
-          style={{width: 100, height: 75}}
-          resizeMode="stretch"
-        />
-        <View style={{ gap: 5, flex: 1}}>
-          <AppText
-            adjustsFontSizeToFit={true}
-            numberOfLines={2}
-            style={[styles.text_header]}
-            >
-            {item.name}
-          </AppText>
-          <AppText numberOfLines={1}>{item.description}</AppText>
+      <View
+        style={[
+          styles.containerViewItem
+        ]}>
+        <View
+          style={[
+            appStyles.flex_row,
+            {
+              alignItems: 'flex-start',
+              backgroundColor: appColors.trang,
+            },
+          ]}>
+          <FastImage
+            source={{uri: item.images}}
+            style={{width: 100, height: 75}}
+            resizeMode="stretch"
+          />
+          <View style={{gap: 5, flex: 1}}>
+            <AppText
+              adjustsFontSizeToFit={true}
+              numberOfLines={2}
+              style={[styles.text_header]}>
+              {item.name}
+            </AppText>
+            <AppText numberOfLines={1}>{item.description}</AppText>
+          </View>
         </View>
       </View>
     );
@@ -250,38 +297,46 @@ export const ThucDon: React.FC<ThucDonProps> = ({cuaHang}) => {
 
   return (
     <View style={styles.container}>
+     
       <FlatList
         data={listMonAn}
         renderItem={ViewItem}
         key={'listMonAn'}
         keyExtractor={(item, index) => 'listMonAn' + item?.menuId}
-        contentContainerStyle={{gap: 12}}
+        // contentContainerStyle={{zIndex: 3}}
         ListHeaderComponent={() => {
           return (
-            <View style={[appStyles.flex_between, {}]}>
-              <View style={appStyles.flex_row}>
-                <AppText>Danh sách thực đơn</AppText>
-                <View>
-                  <TouchableOpacity onPress={() => setModalThemMoi(true)}>
-                    <Ionicons
-                      name="add-circle"
-                      size={25}
-                      color={appColors.xanhLa}
-                    />
-                  </TouchableOpacity>
+            <View style={styles.imageHeader}>
+              <FastImage
+                source={{uri: cuaHang.images}}
+                style={styles.imageHeader}
+                resizeMode="stretch"
+              />
+              {/* <View style={[appStyles.flex_between, {zIndex: 999}]}>
+                <View style={appStyles.flex_row}>
+                  <AppText>Danh sách thực đơn</AppText>
+                  <View>
+                    <TouchableOpacity onPress={() => setModalThemMoi(true)}>
+                      <Ionicons
+                        name="add-circle"
+                        size={25}
+                        color={appColors.xanhLa}
+                      />
+                    </TouchableOpacity>
+                  </View>
                 </View>
-              </View>
-              <View style={styles.btn}>
-                <Button
-                  label="Thêm loại món"
-                  onPress={() => setModalThemLoaiMon(true)}
-                  style={styles.btn}
-                />
-              </View>
+                <View style={styles.btn}>
+                  <Button
+                    label="Thêm loại món"
+                    onPress={() => setModalThemLoaiMon(true)}
+                    style={styles.btn}
+                  />
+                </View>
+              </View> */}
             </View>
           );
         }}
-        // stickyHeaderIndices={[0]}
+        stickyHeaderIndices={[0,2,4]}
         // getItemLayout={(data, index) => ({
         //   length: 75,
         //   offset: 75 * index,
@@ -460,9 +515,9 @@ export const ThucDon: React.FC<ThucDonProps> = ({cuaHang}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: appColors.trang,
+    backgroundColor: appColors.xamDam,
     paddingTop: 10,
-    paddingHorizontal: 12
+    // paddingHorizontal: 12,
   },
   bodyFlastScreen: {
     height: appConfig.height,
@@ -491,4 +546,14 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     width: '100%',
   },
+  imageHeader: {
+    width: appConfig.width,
+    height: (appConfig.width * 4) / 10,
+  },
+  containerViewItem: {
+      paddingHorizontal: 12,
+      backgroundColor: appColors.xamDam,
+      zIndex: 10,
+      paddingBottom: 12,
+  }
 });

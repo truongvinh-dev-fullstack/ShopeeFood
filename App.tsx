@@ -25,6 +25,8 @@ import Toast, {
 import {appColors} from './src/constants/color';
 import RootNavigator from './src/routers/RootNavigator';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import { Provider } from 'react-redux';
+import { store } from './src/redux/stores/config-store';
 
 export const toastConfig = {
   success: (props: React.JSX.IntrinsicAttributes & BaseToastProps) => (
@@ -57,15 +59,17 @@ function App(): React.JSX.Element {
   return (
     <SafeAreaProvider>
       <GestureHandlerRootView>
-        <NavigationContainer
-          theme={isDarkMode === 'dark' ? DarkTheme : DefaultTheme}
-          ref={navigationRef}>
-          <LoadingProvider>
-            <RootNavigator />
-            <Spinner />
-            <Toast config={toastConfig} />
-          </LoadingProvider>
-        </NavigationContainer>
+        <Provider store={store}>
+          <NavigationContainer
+            theme={isDarkMode === 'dark' ? DarkTheme : DefaultTheme}
+            ref={navigationRef}>
+            <LoadingProvider>
+              <RootNavigator />
+              <Spinner />
+              <Toast config={toastConfig} />
+            </LoadingProvider>
+          </NavigationContainer>
+        </Provider>
       </GestureHandlerRootView>
     </SafeAreaProvider>
   );

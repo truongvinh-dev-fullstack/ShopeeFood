@@ -86,9 +86,9 @@ const ChiTietCuaHangQuanLy = () => {
   return (
     <Screen>
       {/* Header1 */}
-      <Animated.View style={headerStyle1}>
+      {/* <Animated.View style={headerStyle1}>
         <Header hasBack={true} title="Chi tiết cửa hàng" />
-      </Animated.View>
+      </Animated.View> */}
       {/* Header 1 */}
 
       {/* Header 2 */}

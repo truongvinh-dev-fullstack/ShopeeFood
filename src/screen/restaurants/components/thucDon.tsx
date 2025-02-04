@@ -30,6 +30,8 @@ import Toast from 'react-native-toast-message';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {Checkbox} from '../../../compoments/checkbox/checkbox';
 import {opacity} from 'react-native-reanimated/lib/typescript/Colors';
+import {Header} from '../../../compoments/header';
+import {goBack} from '../../../routers/NavigationService';
 
 type ThucDonProps = {
   cuaHang: CuaHang;
@@ -69,6 +71,8 @@ export const ThucDon: React.FC<ThucDonProps> = ({cuaHang}) => {
 
   const [listLoaiMonAn, setListLoaiMonAn] = useState<Array<CategoryData>>([]);
   const [listMonAn, setListMonAn] = useState<Array<ThucDonType>>([]);
+  const [listCategoryId, setListCategoryId] = useState<Array<any>>([]);
+  const [indexLoaiMonSelect, setIndexLoaiMonSelect] = useState(0);
 
   useEffect(() => {
     getListLoaiMonAn();
@@ -76,8 +80,9 @@ export const ThucDon: React.FC<ThucDonProps> = ({cuaHang}) => {
     return () => {
       setModalThemMoi(false);
       setListLoaiMonAn([]);
+      // setListMonAn([]);
     };
-  }, []);
+  }, [isFocus]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -86,27 +91,28 @@ export const ThucDon: React.FC<ThucDonProps> = ({cuaHang}) => {
   );
 
   const getListMonAn = async () => {
+    console.log('Lấy mơi');
     try {
-      const querySnapshot = await firestore()
-        .collection('Menu')
-        .where('restaurantId', '==', cuaHang.restaurantId)
-        .get();
+      if (listMonAn?.length == 0) {
+        const querySnapshot = await firestore()
+          .collection('Menu')
+          .where('restaurantId', '==', cuaHang.restaurantId)
+          .get();
 
-      if (!querySnapshot.empty) {
-        const arrMonAn: any = querySnapshot.docs.map(doc => ({
-          ...doc.data(),
-        }));
+        if (!querySnapshot.empty) {
+          const arrMonAn: any = querySnapshot.docs.map(doc => ({
+            ...doc.data(),
+          }));
 
-        const header = {
-          menuId: "3223424"
+          console.log('arrMonAn: ', arrMonAn);
+          let listCategory_Id: any = [];
+          arrMonAn?.map((i: any) => {
+            if (!listCategory_Id.includes(i?.categoryId))
+              listCategory_Id.push(i?.categoryId);
+          });
+          setListMonAn([...arrMonAn]);
+          setListCategoryId(listCategory_Id)
         }
-
-        const scrollHeader = {
-          menuId: "32234fd24"
-        }
-
-        // console.log("arrMonAn: ", arrMonAn)
-        setListMonAn([header,scrollHeader,...arrMonAn]);
       }
     } catch (error) {}
   };
@@ -237,37 +243,34 @@ export const ThucDon: React.FC<ThucDonProps> = ({cuaHang}) => {
   };
 
   const ViewItem: ListRenderItem<ThucDonType> = ({item, index}) => {
-    if(index == 0){
-      return(
-        <View style={[
-          styles.containerViewItem, {backgroundColor : appColors.trang}
-        ]}>
-          <AppText style={styles.text_header}>{cuaHang?.name}</AppText>
-        </View>
-      )
-    }
-    if(index == 1){
-      return(
-        <View style={[
-          styles.containerViewItem, {backgroundColor : appColors.trang, zIndex: 99}
-        ]}>
-          <ScrollView horizontal>
-            {[1,1,1,1,1,1,1,1,1,1,1]?.map((item, index) => {
-              return(
-                <View key={"scrollHeader" + index}>
-                  <AppText>Món ngon</AppText>
-                </View>
-              )
-            })}
-          </ScrollView>
-        </View>
-      )
-    }
+    // if(index == 0){
+    //   return(
+    //     <View style={[
+    //       styles.containerViewItem, {backgroundColor : appColors.trang, zIndex: 10}
+    //     ]}>
+    //       <AppText style={styles.text_header}>{cuaHang?.name}</AppText>
+    //     </View>
+    //   )
+    // }
+    // if(index == 1){
+    //   return(
+    //     <View key={"scrollVew"} style={[
+    //       styles.containerViewItem, {backgroundColor : appColors.trang, zIndex: 20}
+    //     ]}>
+    //       <ScrollView horizontal>
+    //         {[1,1,1,1,1,1,1,1,1,1,1]?.map((item, index) => {
+    //           return(
+    //             <View key={"scrollHeader" + index}>
+    //               <AppText>Món ngon</AppText>
+    //             </View>
+    //           )
+    //         })}
+    //       </ScrollView>
+    //     </View>
+    //   )
+    // }
     return (
-      <View
-        style={[
-          styles.containerViewItem
-        ]}>
+      <View style={[styles.containerViewItem, {zIndex: 4}]}>
         <View
           style={[
             appStyles.flex_row,
@@ -297,52 +300,122 @@ export const ThucDon: React.FC<ThucDonProps> = ({cuaHang}) => {
 
   return (
     <View style={styles.container}>
-     
-      <FlatList
-        data={listMonAn}
-        renderItem={ViewItem}
-        key={'listMonAn'}
-        keyExtractor={(item, index) => 'listMonAn' + item?.menuId}
-        // contentContainerStyle={{zIndex: 3}}
-        ListHeaderComponent={() => {
-          return (
-            <View style={styles.imageHeader}>
-              <FastImage
-                source={{uri: cuaHang.images}}
-                style={styles.imageHeader}
-                resizeMode="stretch"
-              />
-              {/* <View style={[appStyles.flex_between, {zIndex: 999}]}>
-                <View style={appStyles.flex_row}>
-                  <AppText>Danh sách thực đơn</AppText>
-                  <View>
-                    <TouchableOpacity onPress={() => setModalThemMoi(true)}>
-                      <Ionicons
-                        name="add-circle"
-                        size={25}
-                        color={appColors.xanhLa}
-                      />
-                    </TouchableOpacity>
+      {/* Header Image */}
+      <View style={[styles.bodyHeader]}>
+        {/* <View>
+          <Header hasBack={true} title="Chi tiết cửa hàng" />
+        </View> */}
+
+        <View>
+          <FastImage
+            source={{uri: cuaHang.images}}
+            style={styles.imageHeader}
+            resizeMode="stretch"
+          />
+          <TouchableOpacity style={styles.backHerader} onPress={goBack}>
+            <Ionicons
+              name="arrow-back-outline"
+              size={25}
+              color={appColors.trang}
+            />
+          </TouchableOpacity>
+        </View>
+      </View>
+      <View style={{flex: 1, paddingTop: 50}}>
+        <ScrollView
+          contentContainerStyle={{paddingBottom: 20}}
+          showsVerticalScrollIndicator={false}
+          stickyHeaderIndices={[2]}>
+          {/* Header Image */}
+          <View
+            style={[
+              styles.imageHeader,
+              {height: (appConfig.width * 4) / 10 - 50},
+            ]}>
+            {/* <FastImage
+              source={{uri: cuaHang.images}}
+              style={styles.imageHeader}
+              resizeMode="stretch"
+            /> */}
+          </View>
+
+          <View
+            style={[
+              styles.containerViewItem,
+              {backgroundColor: appColors.trang, zIndex: 10},
+            ]}>
+            <AppText style={styles.text_header}>{cuaHang?.name}</AppText>
+          </View>
+
+          {/* Header loại món ăn */}
+          <View
+            key={'scrollVew'}
+            style={[
+              {
+                backgroundColor: appColors.trang,
+                zIndex: 20,
+                position: 'relative',
+                marginBottom: 10,
+              },
+            ]}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              {listCategoryId?.map((item, index) => {
+                let tenLoaiMon = listLoaiMonAn.find((i) => i.categoryId == item)?.name
+                return (
+                  <View
+                    key={'scrollHeader' + index}
+                    style={[
+                      styles.loaiMonAn,
+                      indexLoaiMonSelect == index
+                        ? {backgroundColor: appColors.cam}
+                        : {backgroundColor: appColors.trang},
+                    ]}>
+                    <AppText>{tenLoaiMon}</AppText>
                   </View>
-                </View>
-                <View style={styles.btn}>
-                  <Button
-                    label="Thêm loại món"
-                    onPress={() => setModalThemLoaiMon(true)}
-                    style={styles.btn}
-                  />
-                </View>
-              </View> */}
-            </View>
-          );
-        }}
-        stickyHeaderIndices={[0,2,4]}
-        // getItemLayout={(data, index) => ({
-        //   length: 75,
-        //   offset: 75 * index,
-        //   index,
-        // })}
-      />
+                );
+              })}
+            </ScrollView>
+          </View>
+
+          {/* Danh sách món ăn */}
+          {listCategoryId?.map((item,index) => {
+            let tenLoaiMon = listLoaiMonAn.find((i) => i.categoryId == item)?.name
+            let dsMonAn = listMonAn.filter((i) => i.categoryId == item)
+            return(
+              <View key={"item" + item}>
+                  <AppText>{tenLoaiMon} ({dsMonAn?.length})</AppText>
+                  {dsMonAn.map((monAn, indexMonAn) => (
+                    <View style={[styles.containerViewItem, {zIndex: 1}]} key={"MonAn" + monAn.menuId}>
+                      <View
+                        style={[
+                          appStyles.flex_row,
+                          {
+                            alignItems: 'flex-start',
+                            backgroundColor: appColors.trang,
+                          },
+                        ]}>
+                        <FastImage
+                          source={{uri: monAn.images}}
+                          style={{width: 100, height: 75}}
+                          resizeMode="stretch"
+                        />
+                        <View style={{gap: 5, flex: 1}}>
+                          <AppText
+                            adjustsFontSizeToFit={true}
+                            numberOfLines={2}
+                            style={[styles.text_header]}>
+                            {monAn.name}
+                          </AppText>
+                          <AppText numberOfLines={1}>{monAn.description}</AppText>
+                        </View>
+                      </View>
+                    </View>
+                  ))}
+              </View>
+            )
+          })}
+        </ScrollView>
+      </View>
 
       {/* Thêm thực đơn */}
       <AppModal
@@ -515,8 +588,7 @@ export const ThucDon: React.FC<ThucDonProps> = ({cuaHang}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: appColors.xamDam,
-    paddingTop: 10,
+    backgroundColor: "#EEEEEE",
     // paddingHorizontal: 12,
   },
   bodyFlastScreen: {
@@ -551,9 +623,47 @@ const styles = StyleSheet.create({
     height: (appConfig.width * 4) / 10,
   },
   containerViewItem: {
-      paddingHorizontal: 12,
-      backgroundColor: appColors.xamDam,
-      zIndex: 10,
-      paddingBottom: 12,
-  }
+    paddingHorizontal: 12,
+    backgroundColor: "#EEEEEE",
+    // zIndex: 10,
+    paddingBottom: 12,
+  },
+  stickyHeader: {
+    // position: 'sticky', // Giữ header cố định khi cuộn (iOS & Web)
+    top: 0,
+    backgroundColor: 'white',
+    padding: 10,
+    borderBottomWidth: 1,
+    borderColor: '#ccc',
+    zIndex: 99,
+  },
+  backHerader: {
+    position: 'absolute',
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: 'rgba(15, 1, 1, 0.3)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    top: 16,
+    left: 10,
+  },
+  loaiMonAn: {
+    backgroundColor: appColors.cam,
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+  },
+  bodyHeader: {
+    position: 'absolute',
+    width: appConfig.width,
+    height: (appConfig.width * 4) / 10,
+  },
 });
+
+// {/* Sticky Header */}
+//         {/* <View style={styles.stickyHeader}>
+//           <AppText>Danh sách thực đơn</AppText>
+//           <TouchableOpacity onPress={() => setModalThemMoi(true)}>
+//             <Ionicons name="add-circle" size={25} color={appColors.xanhLa} />
+//           </TouchableOpacity>
+//         </View> */}

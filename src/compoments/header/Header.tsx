@@ -128,10 +128,11 @@ export const Header: React.FC<HeaderProps> = React.memo(
 const styles = StyleSheet.create({
   container: {
     backgroundColor: appColors.trang,
-    paddingVertical: 15,
     borderBottomWidth: 1,
     borderColor: appColors.xamDam,
     gap: 20,
+    height: 50,
+    justifyContent: 'center'
   },
   viewHeader: {
     flexDirection: 'row',

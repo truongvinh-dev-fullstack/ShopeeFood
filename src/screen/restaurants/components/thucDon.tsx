@@ -32,6 +32,7 @@ import {Checkbox} from '../../../compoments/checkbox/checkbox';
 import {opacity} from 'react-native-reanimated/lib/typescript/Colors';
 import {Header} from '../../../compoments/header';
 import {goBack} from '../../../routers/NavigationService';
+import Animated, {useSharedValue} from 'react-native-reanimated';
 
 type ThucDonProps = {
   cuaHang: CuaHang;
@@ -72,7 +73,12 @@ export const ThucDon: React.FC<ThucDonProps> = ({cuaHang}) => {
   const [listLoaiMonAn, setListLoaiMonAn] = useState<Array<CategoryData>>([]);
   const [listMonAn, setListMonAn] = useState<Array<ThucDonType>>([]);
   const [listCategoryId, setListCategoryId] = useState<Array<any>>([]);
+
+  const scrollViewRef = useRef<ScrollView>(null);
+  const categoryPositions = useRef({});
   const [indexLoaiMonSelect, setIndexLoaiMonSelect] = useState(0);
+  const zIndexHeader = useSharedValue(0);
+  const chonLoaiMonHeader = useRef(false);
 
   useEffect(() => {
     getListLoaiMonAn();
@@ -111,7 +117,8 @@ export const ThucDon: React.FC<ThucDonProps> = ({cuaHang}) => {
               listCategory_Id.push(i?.categoryId);
           });
           setListMonAn([...arrMonAn]);
-          setListCategoryId(listCategory_Id)
+          setListCategoryId(listCategory_Id);
+          console.log('listCategory_Id: ', listCategory_Id);
         }
       }
     } catch (error) {}
@@ -242,6 +249,55 @@ export const ThucDon: React.FC<ThucDonProps> = ({cuaHang}) => {
     }
   };
 
+  // Lưu vị trí của từng loại món ăn
+  const handleLayout = (categoryId: any, event: any) => {
+    console.log('layout: ', event.nativeEvent.layout, categoryId);
+    try {
+      categoryPositions.current[categoryId] = event.nativeEvent.layout;
+      //   {
+      //     "x": 0,
+      //     "y": 210.57142639160156,
+      //     "width": 411.4285583496094,
+      //     "height": 291.1428527832031
+      // }
+    } catch (error) {}
+  };
+
+  // Xử lý sự kiện cuộn
+  const handleScroll = (event: any) => {
+    try {
+      if (!chonLoaiMonHeader.current) {
+        const scrollY = event.nativeEvent.contentOffset.y;
+        if (scrollY > 115 && zIndexHeader.value == 0) {
+          zIndexHeader.value = 1;
+        }
+        if (scrollY <= 115 && zIndexHeader.value != 0) {
+          zIndexHeader.value = 0;
+        }
+        let closestCategory: any = null;
+
+        Object.keys(categoryPositions.current).forEach((categoryId, index) => {
+          let distance =
+            categoryPositions.current[categoryId].y +
+            categoryPositions.current[categoryId].height;
+          if (
+            categoryPositions.current[categoryId].y - 50 <= scrollY &&
+            scrollY < distance - 50
+          ) {
+            closestCategory = categoryId;
+          }
+        });
+
+        if (closestCategory !== null) {
+          let findIndex = listCategoryId.findIndex(
+            i => i.toString() == closestCategory.toString(),
+          );
+          setIndexLoaiMonSelect(findIndex);
+        }
+      }
+    } catch (error) {}
+  };
+
   const ViewItem: ListRenderItem<ThucDonType> = ({item, index}) => {
     // if(index == 0){
     //   return(
@@ -302,11 +358,14 @@ export const ThucDon: React.FC<ThucDonProps> = ({cuaHang}) => {
     <View style={styles.container}>
       {/* Header Image */}
       <View style={[styles.bodyHeader]}>
-        {/* <View>
+        {/* Header 1 */}
+        <Animated.View
+          style={{position: 'absolute', zIndex: zIndexHeader, width: '100%'}}>
           <Header hasBack={true} title="Chi tiết cửa hàng" />
-        </View> */}
+        </Animated.View>
 
-        <View>
+        {/* Header 2 */}
+        <View style={{zIndex: 0}}>
           <FastImage
             source={{uri: cuaHang.images}}
             style={styles.imageHeader}
@@ -319,14 +378,23 @@ export const ThucDon: React.FC<ThucDonProps> = ({cuaHang}) => {
               color={appColors.trang}
             />
           </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.addMonAnHeader}
+            onPress={() => setModalThemMoi(true)}>
+            <Ionicons name="add-outline" size={25} color={appColors.trang} />
+          </TouchableOpacity>
         </View>
       </View>
       <View style={{flex: 1, paddingTop: 50}}>
         <ScrollView
+          ref={scrollViewRef}
           contentContainerStyle={{paddingBottom: 20}}
           showsVerticalScrollIndicator={false}
-          stickyHeaderIndices={[2]}>
-          {/* Header Image */}
+          stickyHeaderIndices={[2]}
+          onScroll={handleScroll}
+          scrollEventThrottle={16}>
+          {/* khoảng cách bằng header */}
           <View
             style={[
               styles.imageHeader,
@@ -347,7 +415,7 @@ export const ThucDon: React.FC<ThucDonProps> = ({cuaHang}) => {
             <AppText style={styles.text_header}>{cuaHang?.name}</AppText>
           </View>
 
-          {/* Header loại món ăn */}
+          {/* ScrollView ngang hiển thị loại món ăn */}
           <View
             key={'scrollVew'}
             style={[
@@ -355,64 +423,98 @@ export const ThucDon: React.FC<ThucDonProps> = ({cuaHang}) => {
                 backgroundColor: appColors.trang,
                 zIndex: 20,
                 position: 'relative',
-                marginBottom: 10,
+                paddingVertical: 5,
+                // paddingBottom: 10,
               },
             ]}>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               {listCategoryId?.map((item, index) => {
-                let tenLoaiMon = listLoaiMonAn.find((i) => i.categoryId == item)?.name
+                let tenLoaiMon = listLoaiMonAn.find(
+                  i => i.categoryId == item,
+                )?.name;
                 return (
-                  <View
+                  <TouchableOpacity
+                    onPress={() => {
+                      setIndexLoaiMonSelect(index);
+                      chonLoaiMonHeader.current = true;
+                      scrollViewRef.current?.scrollTo({
+                        y: categoryPositions.current[item].y - 50,
+                        animated: true,
+                      });
+                      setTimeout(() => chonLoaiMonHeader.current = false, 500)
+                      
+                    }}
                     key={'scrollHeader' + index}
                     style={[
                       styles.loaiMonAn,
                       indexLoaiMonSelect == index
-                        ? {backgroundColor: appColors.cam}
-                        : {backgroundColor: appColors.trang},
+                        ? {
+                            borderBottomColor: appColors.camDam,
+                            borderBottomWidth: 1,
+                          }
+                        : {},
                     ]}>
-                    <AppText>{tenLoaiMon}</AppText>
-                  </View>
+                    <AppText
+                      style={
+                        indexLoaiMonSelect == index
+                          ? {color: appColors.camDam}
+                          : {}
+                      }>
+                      {tenLoaiMon}
+                    </AppText>
+                  </TouchableOpacity>
                 );
               })}
             </ScrollView>
           </View>
 
           {/* Danh sách món ăn */}
-          {listCategoryId?.map((item,index) => {
-            let tenLoaiMon = listLoaiMonAn.find((i) => i.categoryId == item)?.name
-            let dsMonAn = listMonAn.filter((i) => i.categoryId == item)
-            return(
-              <View key={"item" + item}>
-                  <AppText>{tenLoaiMon} ({dsMonAn?.length})</AppText>
-                  {dsMonAn.map((monAn, indexMonAn) => (
-                    <View style={[styles.containerViewItem, {zIndex: 1}]} key={"MonAn" + monAn.menuId}>
-                      <View
-                        style={[
-                          appStyles.flex_row,
-                          {
-                            alignItems: 'flex-start',
-                            backgroundColor: appColors.trang,
-                          },
-                        ]}>
-                        <FastImage
-                          source={{uri: monAn.images}}
-                          style={{width: 100, height: 75}}
-                          resizeMode="stretch"
-                        />
-                        <View style={{gap: 5, flex: 1}}>
-                          <AppText
-                            adjustsFontSizeToFit={true}
-                            numberOfLines={2}
-                            style={[styles.text_header]}>
-                            {monAn.name}
-                          </AppText>
-                          <AppText numberOfLines={1}>{monAn.description}</AppText>
-                        </View>
+          {listCategoryId?.map((item, index) => {
+            let tenLoaiMon = listLoaiMonAn.find(
+              i => i.categoryId == item,
+            )?.name;
+            let dsMonAn = listMonAn.filter(i => i.categoryId == item);
+            return (
+              <View
+                key={'item' + item}
+                onLayout={event => handleLayout(item, event)}>
+                <View style={{backgroundColor: '#EEEEEE'}}>
+                  <AppText style={styles.textLoaiMonAn}>
+                    {tenLoaiMon} ({dsMonAn?.length})
+                  </AppText>
+                </View>
+
+                {dsMonAn.map((monAn, indexMonAn) => (
+                  <View
+                    style={[styles.containerViewItem, {zIndex: 1}]}
+                    key={'MonAn' + monAn.menuId}>
+                    <View
+                      style={[
+                        appStyles.flex_row,
+                        {
+                          alignItems: 'flex-start',
+                          backgroundColor: appColors.trang,
+                        },
+                      ]}>
+                      <FastImage
+                        source={{uri: monAn.images}}
+                        style={{width: 100, height: 75}}
+                        resizeMode="stretch"
+                      />
+                      <View style={{gap: 5, flex: 1}}>
+                        <AppText
+                          adjustsFontSizeToFit={true}
+                          numberOfLines={2}
+                          style={[styles.text_header]}>
+                          {monAn.name}
+                        </AppText>
+                        <AppText numberOfLines={1}>{monAn.description}</AppText>
                       </View>
                     </View>
-                  ))}
+                  </View>
+                ))}
               </View>
-            )
+            );
           })}
         </ScrollView>
       </View>
@@ -425,49 +527,63 @@ export const ThucDon: React.FC<ThucDonProps> = ({cuaHang}) => {
         <AppModal.Container>
           <AppModal.Body style={appStyles.viewBodyModal}>
             <ScrollView contentContainerStyle={appStyles.gap_10}>
+              <AppText style={styles.text_header}>Thêm món ăn</AppText>
               <AppText>Phân loại</AppText>
-              <DropDownPicker
-                style={[appStyles.dropDownPicker]}
-                placeholder={'Chọn'}
-                placeholderStyle={{
-                  color: 'grey',
-                }}
-                itemSeparator={true}
-                dropDownContainerStyle={[appStyles.dropDownContainerTopStyle]}
-                mode="BADGE"
-                // searchable
-                // searchPlaceholder={"Tìm kiếm"}
-                maxHeight={250}
-                // multiple
-                dropDownDirection="BOTTOM"
-                listMode="SCROLLVIEW"
-                scrollViewProps={{
-                  nestedScrollEnabled: true,
-                }}
-                onSelectItem={item => {
-                  setThucDonData({...thucDonData, categoryId: item?.value});
-                }}
-                open={showModal?.showCategory}
-                value={thucDonData.categoryId}
-                items={
-                  listLoaiMonAn
-                    ? listLoaiMonAn.map(item => {
-                        return {
-                          value: item?.categoryId,
-                          label: item?.name,
-                        };
-                      })
-                    : []
-                }
-                setOpen={() => {
-                  setShowModal({
-                    ...showModal,
-                    showCategory: !showModal?.showCategory,
-                  });
-                }}
-                setValue={() => {}}
-                zIndex={204}
-              />
+              <View style={appStyles.flex_between}>
+                <View style={{width: '90%'}}>
+                  <DropDownPicker
+                    style={[appStyles.dropDownPicker]}
+                    placeholder={'Chọn'}
+                    placeholderStyle={{
+                      color: 'grey',
+                    }}
+                    itemSeparator={true}
+                    dropDownContainerStyle={[
+                      appStyles.dropDownContainerTopStyle,
+                    ]}
+                    mode="BADGE"
+                    // searchable
+                    // searchPlaceholder={"Tìm kiếm"}
+                    maxHeight={250}
+                    // multiple
+                    dropDownDirection="BOTTOM"
+                    listMode="SCROLLVIEW"
+                    scrollViewProps={{
+                      nestedScrollEnabled: true,
+                    }}
+                    onSelectItem={item => {
+                      setThucDonData({...thucDonData, categoryId: item?.value});
+                    }}
+                    open={showModal?.showCategory}
+                    value={thucDonData.categoryId}
+                    items={
+                      listLoaiMonAn
+                        ? listLoaiMonAn.map(item => {
+                            return {
+                              value: item?.categoryId,
+                              label: item?.name,
+                            };
+                          })
+                        : []
+                    }
+                    setOpen={() => {
+                      setShowModal({
+                        ...showModal,
+                        showCategory: !showModal?.showCategory,
+                      });
+                    }}
+                    setValue={() => {}}
+                    zIndex={204}
+                  />
+                </View>
+                <TouchableOpacity onPress={() => setModalThemLoaiMon(true)}>
+                  <Ionicons
+                    name="add-circle"
+                    size={25}
+                    color={appColors.xanhLaDam}
+                  />
+                </TouchableOpacity>
+              </View>
 
               <AppInput
                 label="Tên món ăn"
@@ -588,7 +704,7 @@ export const ThucDon: React.FC<ThucDonProps> = ({cuaHang}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#EEEEEE",
+    backgroundColor: '#EEEEEE',
     // paddingHorizontal: 12,
   },
   bodyFlastScreen: {
@@ -624,7 +740,7 @@ const styles = StyleSheet.create({
   },
   containerViewItem: {
     paddingHorizontal: 12,
-    backgroundColor: "#EEEEEE",
+    backgroundColor: '#EEEEEE',
     // zIndex: 10,
     paddingBottom: 12,
   },
@@ -648,8 +764,18 @@ const styles = StyleSheet.create({
     top: 16,
     left: 10,
   },
+  addMonAnHeader: {
+    position: 'absolute',
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: 'rgba(12, 228, 5, 0.5)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    top: 16,
+    right: 10,
+  },
   loaiMonAn: {
-    backgroundColor: appColors.cam,
     paddingHorizontal: 8,
     paddingVertical: 5,
   },
@@ -657,6 +783,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: appConfig.width,
     height: (appConfig.width * 4) / 10,
+  },
+  textLoaiMonAn: {
+    fontSize: 16,
+    marginLeft: 12,
+    marginBottom: 8,
   },
 });
 

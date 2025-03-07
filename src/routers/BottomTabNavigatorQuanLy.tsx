@@ -4,7 +4,8 @@ import {Platform, View} from 'react-native';
 import {BottomTabButton, BottomTabLabel} from './components';
 import {useIsFocused, useRoute} from '@react-navigation/native';
 import {TabNames} from './RouteNames';
-import QuanLyCuaHang from '../screen/bottomTabQuanLy/quanLyCuaHang';
+import QuanLyCuaHang from '../screenHttp/bottomTabQuanLy/quanLyCuaHang';
+// import QuanLyCuaHang from '../screen/bottomTabQuanLy/quanLyCuaHang';
 
 const Tab = createBottomTabNavigator();
 

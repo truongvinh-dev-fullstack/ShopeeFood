@@ -5,8 +5,8 @@ export interface ThucDonType {
   name: string;
   images: string;
   description: string;
-  price: number | null,
-  originalPrice: number | null,
+  price: number,
+  originalPrice: number,
   like: number | null;
   sold: number | null;
   flashSale: boolean;

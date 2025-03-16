@@ -9,7 +9,7 @@ import {View} from 'react-native';
 import WelcomeScreen from '../screen/welcome/welcome';
 import BottomTabScreen from './BottomTabNavigator';
 import BottomTabQuanLy from './BottomTabNavigatorQuanLy';
-import ChiTietCuaHang from '../screen/restaurants/chiTietCuaHang';
+import ChiTietCuaHang from '../screen/cus/restaurants/chiTietCuaHang';
 import chiTietCuaHangQuanLy from '../screen/restaurants/chiTietCuaHangQuanLy';
 
 const {Navigator, Screen} = createNativeStackNavigator<RootStackParamList>();

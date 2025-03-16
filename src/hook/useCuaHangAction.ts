@@ -6,7 +6,7 @@ import { useAppDispatch } from "../redux/stores/hook"
 export const useCuaHangActions = () => {
 	const dispatch = useAppDispatch()
 
-	const setDanhSachCuaHangRedux = async (data: CuaHangType) => {
+	const setDanhSachCuaHangRedux = async (data: CuaHangType[]) => {
 		dispatch(setDanhSachCuaHang(data))
 		// await onCountUnseenNotification();
 	}

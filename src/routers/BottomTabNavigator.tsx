@@ -21,8 +21,8 @@ const BottomTabScreen = () => {
   const tabs = [
     {route: TabNames.HomeScreen,component: HomeScreen, name: 'Home', icon: 'restaurant'},
     {route: TabNames.DonHangScreen,component: DonHangScreen, name: 'Đơn hàng', icon: 'document-text'},
-    {route: TabNames.YeuThichScreen,component: YeuThichScreen, name: 'Thích', icon: 'heart'},
-    {route: TabNames.ThongBaoScreen,component: ThongBaoScreen, name: 'Thông báo', icon: 'notifications'},
+    // {route: TabNames.YeuThichScreen,component: YeuThichScreen, name: 'Thích', icon: 'heart'},
+    // {route: TabNames.ThongBaoScreen,component: ThongBaoScreen, name: 'Thông báo', icon: 'notifications'},
     {route: TabNames.TaiKhoanScreen,component: TaiKhoanScreen, name: 'Tôi', icon: 'person'},
   ];
 

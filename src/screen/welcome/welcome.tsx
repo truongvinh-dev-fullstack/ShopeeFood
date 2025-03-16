@@ -11,6 +11,7 @@ import {appConfig} from '../../constants/AppConfig';
 import {navigate} from '../../routers/NavigationService';
 import {RouteNames} from '../../routers/RouteNames';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import { useUserState } from '../../hook/useUserState';
 
 interface ViewTextAnimatedProps {
   text: string;
@@ -20,12 +21,14 @@ interface ViewTextAnimatedProps {
 }
 
 const WelcomeScreen = () => {
+  const {user} = useUserState();
   const [animate, setAnimate] = useState(false);
 
   useFocusEffect(
     React.useCallback(() => {
       setAnimate(true);
       const timeout = setTimeout(() => {
+        console.log("user: ", user)
         navigate(RouteNames.LOGIN);
       }, 3500);
 

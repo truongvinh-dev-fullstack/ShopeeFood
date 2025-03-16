@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { CuaHangState } from './type'
+import { CuaHangState, CuaHangType } from './type'
 
 const initialState: CuaHangState = {
 	items: [],
@@ -10,8 +10,8 @@ const cuaHangSlice = createSlice({
 	name: 'cuaHang',
 	initialState,
 	reducers: {
-		setDanhSachCuaHang(state: CuaHangState, action: PayloadAction<any>) {
-			console.log("action: ", action)
+		setDanhSachCuaHang(state: CuaHangState, action: PayloadAction<any[]>) {
+			console.log("action cua hang: ", action)
 			state.items = action.payload
 			state.isLoading = false
 		},

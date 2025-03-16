@@ -23,19 +23,23 @@ import firestore from '@react-native-firebase/firestore';
 import {appConfig} from '../../constants/AppConfig';
 import {icons} from '../../assets/icons';
 import Animated, {
+  Easing,
   FadeInDown,
   FadeInLeft,
   FadeInRight,
+  ReduceMotion,
   useSharedValue,
   withDelay,
   withTiming,
 } from 'react-native-reanimated';
-import { navigate } from '../../routers/NavigationService';
-import { RouteNames } from '../../routers/RouteNames';
-import { useCuaHangState } from '../../hook/useCuaHangState';
+import {navigate} from '../../routers/NavigationService';
+import {RouteNames} from '../../routers/RouteNames';
+import {useCuaHangState} from '../../hook/useCuaHangState';
+import { useUserActions } from '../../hook/useUserAction';
+import { UserState } from '../../redux/slices/type';
 
 const LoginScreen = () => {
-    
+  const {setUserInfoRedux} = useUserActions();
   const [form, setForm] = useState({
     phone: '',
     password: '',
@@ -47,13 +51,15 @@ const LoginScreen = () => {
 
   useEffect(() => {
     fetchData();
-    loadAnimated()
-    return(() => {
-      opacityAnimated.value = 0
-    })
+    loadAnimated();
+    return () => {
+      opacityAnimated.value = 0;
+    };
   }, []);
 
-  const opacityAnimated = useSharedValue(0)
+  const opacityAnimated = useSharedValue(0);
+  const rightAnimatedPhone = useSharedValue(-16);
+  const leftAnimatedPhone = useSharedValue(-appConfig.width);
 
   const fetchData = async () => {
     // const userDocument = await firestore().collection('users').get();
@@ -61,8 +67,8 @@ const LoginScreen = () => {
   };
 
   const loadAnimated = () => {
-    opacityAnimated.value = withDelay(500, withTiming(1))
-  }
+    opacityAnimated.value = withDelay(500, withTiming(1));
+  };
 
   const handleInputChange = (field: string, value: string) => {
     setForm(prevForm => ({...prevForm, [field]: value}));
@@ -72,16 +78,79 @@ const LoginScreen = () => {
     setPlaceHolder(prevForm => ({...prevForm, [field]: value}));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async (type: number) => {
+    // Type = 1: Ấn tiếp tục khi nhập số điện thoại
+    // Type = 2: Ấn tiếp tục đăng nhập khi nhập mật khẩu
     const {phone, password} = form;
+    switch (type) {
+      case 1: {
+        if (!phone) {
+          showToast('error', 'Cần điền đầy đủ thông tin');
+          return;
+        }
+        const userQuerySnapshot = await firestore()
+          .collection('Users') // Chọn bảng "User"
+          .where('phone', '==', phone)  // điều kiện
+          .get();
 
-    // if (!phone) {
-    //   showToast('error', 'Cần điền đầy đủ thông tin');
-    //   // Alert.alert('Error', 'All fields are required.');
-    //   return;
-    // }
-    // navigate(RouteNames.MAIN)
-    navigate(RouteNames.MAIN_QUANLY)
+        if (userQuerySnapshot.empty) {
+          showToast('error', 'Số điện thoại chưa được đăng ký!');
+          return null;
+        }else{
+          rightAnimatedPhone.value = withTiming(appConfig.width, {
+            duration: 300,
+            easing: Easing.inOut(Easing.quad),
+            reduceMotion: ReduceMotion.System,
+          });
+          leftAnimatedPhone.value = withDelay(
+            500,
+            withTiming(-16, {
+              duration: 300,
+              easing: Easing.inOut(Easing.quad),
+              reduceMotion: ReduceMotion.System,
+            }),
+          );
+        }
+        return
+        
+      }
+      case 2: {
+        if (!password) {
+          showToast('error', 'Cần điền đầy đủ thông tin');
+          return;
+        }
+        try {
+          const userQuerySnapshot = await firestore()
+          .collection('Users') // Chọn bảng "User"
+          .where('phone', '==', phone)  // điều kiện
+          .where('password', '==', password)  // điều kiện
+          .get();
+
+        if (userQuerySnapshot.empty) {
+          showToast('error', 'Mật khẩu không chính xác!');
+          return
+        }else{
+          const userData : any = userQuerySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+      
+          console.log("User data:", userData);
+          setUserInfoRedux(userData[0])
+          let user : UserState = userData[0]
+          if(user.role == "CUS"){
+            navigate(RouteNames.MAIN)
+          }
+          if(user.role == "ADMIN"){
+            navigate(RouteNames.MAIN_QUANLY)
+          }
+        }
+        } catch (error) {
+          
+        }
+      }
+    }
+  
   };
 
   const phuonThucKhacAnimed = FadeInDown.withInitialValues({
@@ -121,37 +190,86 @@ const LoginScreen = () => {
                 style={styles.image}
               />
             </Animated.View>
-            <Animated.View style={[styles.boxDangNHap,{
-              opacity: opacityAnimated
-            }]}>
-              <AppInput
-                keyboardType="numeric"
-                style={styles.input}
-                placeHolder={placeHolder.phone}
-                value={form.phone}
-                onChangeText={value => handleInputChange('phone', value)}
-                autoCapitalize="none"
-                autoCorrect={false}
-                IconLeft={
-                  <Ionicons
-                    name="call-outline"
-                    size={22}
-                    color={appColors.den}
-                  />
-                }
-                onFocus={() => handlePlaceHolderChange('phone', '')}
-                onBlur={() =>
-                  handlePlaceHolderChange('phone', 'Nhập số điện thoại')
-                }
-                inputStyle={{
-                  borderWidth: 0,
-                  borderBottomWidth: 1,
-                  borderRadius: 0,
-                }}
-                onSubmitEditing={handleSubmit}
-              />
+            <Animated.View
+              style={[
+                styles.boxDangNHap,
+                {
+                  opacity: opacityAnimated,
+                },
+              ]}>
+              <View style={{height: 50}}></View>
+              <Animated.View
+                style={[
+                  {paddingHorizontal: 16, position: 'absolute', right: rightAnimatedPhone}
+                ]}
+              >
+                <AppInput
+                  keyboardType="numeric"
+                  style={styles.input}
+                  placeHolder={placeHolder.phone}
+                  value={form.phone}
+                  onChangeText={value => handleInputChange('phone', value)}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  IconLeft={
+                    <Ionicons
+                      name="call-outline"
+                      size={22}
+                      color={appColors.den}
+                    />
+                  }
+                  onFocus={() => handlePlaceHolderChange('phone', '')}
+                  onBlur={() =>
+                    handlePlaceHolderChange('phone', 'Nhập số điện thoại')
+                  }
+                  inputStyle={{
+                    borderWidth: 0,
+                    borderBottomWidth: 1,
+                    borderRadius: 0,
+                  }}
+                  onSubmitEditing={() => handleSubmit(1)}
+                />
+              </Animated.View>
+              <Animated.View
+                style={[
+                  {
+                    paddingHorizontal: 16,
+                    position: 'absolute',
+                    right: leftAnimatedPhone,
+                  },
+                ]}>
+                <AppInput
+                  style={styles.input}
+                  placeHolder={placeHolder.password}
+                  value={form.password}
+                  onChangeText={value => handleInputChange('password', value)}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  IconLeft={
+                    <Ionicons
+                      name="lock-closed-outline"
+                      size={22}
+                      color={appColors.den}
+                    />
+                  }
+                  onFocus={() => handlePlaceHolderChange('password', '')}
+                  onBlur={() =>
+                    handlePlaceHolderChange('phone', 'Nhập mật khẩu')
+                  }
+                  inputStyle={{
+                    borderWidth: 0,
+                    borderBottomWidth: 1,
+                    borderRadius: 0,
+                  }}
+                  onSubmitEditing={() => handleSubmit(2)}
+                />
+              </Animated.View>
 
-              <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+              <TouchableOpacity style={styles.button} onPress={() => {
+                if(!form.password){
+                  handleSubmit(1)
+                }else handleSubmit(2)
+              }}>
                 <Text style={styles.buttonText}>Tiếp tục</Text>
               </TouchableOpacity>
               {/* Hoặc đăng nhập phương thức khác */}
@@ -263,7 +381,7 @@ const styles = StyleSheet.create({
   boxDangNHap: {
     gap: 12,
     alignItems: 'center',
-    width: '100%'
+    width: '100%',
   },
   image: {
     width: 136,

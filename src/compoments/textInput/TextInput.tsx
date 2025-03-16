@@ -27,6 +27,7 @@ export type IAppInputTheme = {
 }
 
 export type IAppInputProps = {
+	styleInput?: TextStyle
 	ref?: any
 	label?: string
 	placeHolder?: string
@@ -73,7 +74,7 @@ export const AppInput = (props: IAppInputProps) => {
 				) : null}
 				{props?.IconLeft ? props?.IconLeft : null}
 				<TextInput
-					style={[theme.input]}
+					style={[theme.input, props?.styleInput]}
 					placeholder={props?.placeHolder}
 					keyboardType={props?.keyboardType}
 					placeholderTextColor={appColors.xam}
@@ -112,7 +113,7 @@ const styles = StyleSheet.create({
 	input: {
 		// marginLeft: 20,
 		flex: 1,
-		color: appColors.den
+		color: appColors.den, 
 	},
 	label: { marginBottom: 8, marginRight: 5, color: appColors.den },
 	error: { marginTop: 8, marginLeft: 10 },

@@ -1,6 +1,6 @@
 import { OrderType } from "../redux/slices/type"
 import { useAppDispatch } from "../redux/stores/hook"
-import { addOrder } from "../redux/slices/orderSlice"
+import { addOrder, removeItem } from "../redux/slices/orderSlice"
 
 
 export const useOrderActions = () => {
@@ -9,7 +9,11 @@ export const useOrderActions = () => {
 	const addListOrder= async (data: OrderType) => {
 		dispatch(addOrder(data))
 	}
+	const removeItemOrder= async (id: string) => {
+		dispatch(removeItem(id))
+	}
 	return {
 		addListOrder,
+		removeItemOrder
 	}
 }

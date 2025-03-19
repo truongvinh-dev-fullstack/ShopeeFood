@@ -125,6 +125,7 @@ export const ThucDon: React.FC<ThucDonProps> = ({cuaHang}) => {
       originalPrice: monAn.originalPrice,
       price: monAn.price,
       quantity: 1,
+      images: monAn.images
     })
 
   }

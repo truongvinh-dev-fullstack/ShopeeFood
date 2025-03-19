@@ -52,6 +52,7 @@ export interface OrderType {
     name: string; 
     originalPrice: number; 
     price: number; 
-    quantity: number
+    quantity: number;
+    images: string;
 }
 

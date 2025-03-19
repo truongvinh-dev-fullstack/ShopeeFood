@@ -19,8 +19,16 @@ const orderSlice = createSlice({
         state.items.push({...action.payload, quantity: 1}); // Đảm bảo có quantity ban đầu
       }
     },
+    removeItem(state: OrderState, action: PayloadAction<string>) {
+      const existingItem = state.items.find(
+        item => item.id === action.payload,
+      );
+      if (existingItem) {
+        existingItem.quantity -= 1; // Trực tiếp tăng số lượng
+      }
+    },
   },
 });
 
-export const {addOrder} = orderSlice.actions;
+export const {addOrder, removeItem} = orderSlice.actions;
 export default orderSlice.reducer;

@@ -136,7 +136,11 @@ const LoginScreen = () => {
           }));
       
           console.log("User data:", userData);
-          setUserInfoRedux(userData[0])
+          let coordinates = {
+            latitude: userData[0].coordinates.latitude,
+            longitude: userData[0].coordinates.longitude
+          }
+          setUserInfoRedux({...userData[0], coordinates})
           let user : UserState = userData[0]
           if(user.role == "CUS"){
             navigate(RouteNames.MAIN)

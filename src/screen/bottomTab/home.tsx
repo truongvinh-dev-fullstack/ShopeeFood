@@ -28,6 +28,7 @@ import {useCuaHangActions} from '../../hook/useCuaHangAction';
 import {useCuaHangState} from '../../hook/useCuaHangState';
 import {CuaHang} from '../bottomTabQuanLy/type';
 import {CuaHangType} from '../../redux/slices/type';
+import crashlytics from '@react-native-firebase/crashlytics';
 
 const HomeScreen = () => {
   const {setDanhSachCuaHangRedux} = useCuaHangActions();
@@ -39,6 +40,20 @@ const HomeScreen = () => {
   const [listCuaHang, setListCuaHang] = useState<Array<CuaHang>>([]);
 
   useEffect(() => {
+    try {
+      // Lỗi logic: biến `a` là số, không có thuộc tính `length`
+      let a = 5;
+      a.length = 1; // ❌ lỗi sẽ xảy ra ở đây (không thực sự throw, nhưng không hợp lệ)
+  
+      // Một lỗi thật sự:
+      let b: any = undefined;
+      console.log(b.doSomething()); // ❌ lỗi runtime thật sự
+      console.log("k Lỗi")
+    } catch (error) {
+      console.log("Lỗi")
+      // Gửi lỗi thủ công lên Firebase
+      crashlytics().recordError(error as Error);
+    }
     setIsLoading(false);
     getListCuaHang();
     return () => {

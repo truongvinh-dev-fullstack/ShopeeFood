@@ -35,6 +35,7 @@ export default function RootNavigator() {
       {screen?.map(item => {
         return (
           <Screen
+            key={item.name}
             options={{
               gestureEnabled: false,
               headerLeft: () => null,

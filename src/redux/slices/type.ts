@@ -41,6 +41,7 @@ export interface UserState {
     password:       string;
     address:        string;
     restaurantInfo: string;
+    coordinates: Location
 }
 
 export interface OrderState {

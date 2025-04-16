@@ -10,7 +10,6 @@ import DonHangScreen from '../screen/bottomTab/donHang';
 import YeuThichScreen from '../screen/bottomTab/yeuThich';
 import TaiKhoanScreen from '../screen/bottomTab/taiKhoan';
 import ThongBaoScreen from '../screen/bottomTab/thongBao';
-import {appColors} from '../constants/color';
 
 const Tab = createBottomTabNavigator();
 
@@ -52,12 +51,6 @@ const BottomTabScreen = () => {
             name={item.route}
             component={item.component}
             options={{
-              // tabBarLabel: ({focused}) => (
-              //   <BottomTabLabel focused={focused} content={item.name} />
-              // ),
-              // tabBarIcon: ({focused}: {focused: boolean}) => (
-              //   <BottomTabButton focused={focused} name={item.icon} />
-              // ),
               tabBarButton: (props) => {
                 return(
                   <BottomTabButton {...props} item={item} />

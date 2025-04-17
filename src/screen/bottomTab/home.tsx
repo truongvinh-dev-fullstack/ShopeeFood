@@ -1,4 +1,4 @@
-import React, {memo, useEffect, useRef, useState} from 'react';
+import React, { memo, useEffect, useRef, useState } from 'react';
 import {
   View,
   StyleSheet,
@@ -7,54 +7,35 @@ import {
   ListRenderItem,
   TextInput,
 } from 'react-native';
-import {appColors} from '../../constants/color';
-import {SafeAreaView} from 'react-native-safe-area-context';
-
-import {appConfig} from '../../constants/AppConfig';
-import {useIsFocused, useNavigation} from '@react-navigation/native';
-import {AppText} from '../../compoments/text/AppText';
-import {AppInput} from '../../compoments/textInput/TextInput';
-import {Header} from '../../compoments/header';
-import {appStyles} from '../../themes/AppStyles';
+import { appColors } from '../../constants/color';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { appConfig } from '../../constants/AppConfig';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
+import { AppText } from '../../compoments/text/AppText';
+import { appStyles } from '../../themes/AppStyles';
+import firestore from '@react-native-firebase/firestore';
+import FastImage from 'react-native-fast-image';
+import { navigate } from '../../routers/NavigationService';
+import { RouteNames, TabNames } from '../../routers/RouteNames';
+import CuaHangLoader from '../../compoments/contentLoader/cuaHangLoader';
+import { useCuaHangActions } from '../../hook/useCuaHangAction';
+import { useCuaHangState } from '../../hook/useCuaHangState';
+import { CuaHang } from '../bottomTabQuanLy/type';
+import { CuaHangType } from '../../redux/slices/type';
+import crashlytics from '@react-native-firebase/crashlytics';
+import { useUserState } from '../../hook/useUserState';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-import firestore from '@react-native-firebase/firestore';
-import Button from '../../compoments/button';
-import FastImage from 'react-native-fast-image';
-import {navigate} from '../../routers/NavigationService';
-import {TabNames} from '../../routers/RouteNames';
-import CuaHangLoader from '../../compoments/contentLoader/cuaHangLoader';
-import {useCuaHangActions} from '../../hook/useCuaHangAction';
-import {useCuaHangState} from '../../hook/useCuaHangState';
-import {CuaHang} from '../bottomTabQuanLy/type';
-import {CuaHangType} from '../../redux/slices/type';
-import crashlytics from '@react-native-firebase/crashlytics';
 
 const HomeScreen = () => {
-  const {setDanhSachCuaHangRedux} = useCuaHangActions();
-  const {cuaHangs, loading} = useCuaHangState();
+  const { setDanhSachCuaHangRedux } = useCuaHangActions();
+  const { user } = useUserState();
+  const { cuaHangs, loading } = useCuaHangState();
   const [isLoading, setIsLoading] = useState(true);
-
   const isFocus = useIsFocused();
-
   const [listCuaHang, setListCuaHang] = useState<Array<CuaHang>>([]);
 
   useEffect(() => {
-    try {
-      // Lỗi logic: biến `a` là số, không có thuộc tính `length`
-      let a = 5;
-      a.length = 1; // ❌ lỗi sẽ xảy ra ở đây (không thực sự throw, nhưng không hợp lệ)
-  
-      // Một lỗi thật sự:
-      let b: any = undefined;
-      console.log(b.doSomething()); // ❌ lỗi runtime thật sự
-      console.log("k Lỗi")
-    } catch (error) {
-      console.log("Lỗi")
-      // Gửi lỗi thủ công lên Firebase
-      crashlytics().recordError(error as Error);
-    }
-    setIsLoading(false);
     getListCuaHang();
     return () => {
       setListCuaHang([]);
@@ -63,38 +44,43 @@ const HomeScreen = () => {
   }, [isFocus]);
 
   const getListCuaHang = async () => {
-    if (loading) {
-      try {
-        const querySnapshot = await firestore().collection('Restaurants').get();
-        if (!querySnapshot.empty) {
-          const listCuaHang: any = querySnapshot.docs.map(doc => ({
-            ...doc.data(),
-          }));
+    try {
+      if (loading) {
+        try {
+          const querySnapshot = await firestore().collection('Restaurants').get();
+          if (!querySnapshot.empty) {
+            const listCuaHang: any = querySnapshot.docs.map(doc => ({
+              ...doc.data(),
+            }));
 
-          let listData: CuaHangType[] = [];
-          listCuaHang.forEach((item: any) => {
-            let location = {
-              latitude: item.location._latitude, // Lấy dữ liệu từ object
-              longitude: item.location._longitude,
-            };
-            let createdAt = new Date(item.createdAt._seconds * 1000).getTime(); 
-            listData.push({...item, location, createdAt});
-          });
+            let listData: CuaHangType[] = [];
+            listCuaHang.forEach((item: any) => {
+              let location = {
+                latitude: item.location._latitude, // Lấy dữ liệu từ object
+                longitude: item.location._longitude,
+              };
+              let createdAt = new Date(item.createdAt._seconds * 1000).getTime();
+              listData.push({ ...item, location, createdAt });
+            });
 
-          setDanhSachCuaHangRedux(listData);
-          setIsLoading(false);
-          setListCuaHang(listCuaHang);
+            setDanhSachCuaHangRedux(listData);
+            setIsLoading(false);
+            setListCuaHang(listCuaHang);
+          }
+        } catch (error) {
+          console.log('Lỗi lấy dữ liệu cửa hàng');
         }
-      } catch (error) {
-        console.log('Lỗi lấy dữ liệu cửa hàng');
+      } else {
+        setListCuaHang(cuaHangs);
+        setIsLoading(false);
       }
-    } else {
-      setListCuaHang(cuaHangs);
-      setIsLoading(false);
+    } catch (error) {
+      crashlytics().recordError(error as Error);
     }
+
   };
 
-  const ViewItem: ListRenderItem<CuaHang> = ({item, index}) => {
+  const ViewItem: ListRenderItem<CuaHang> = ({ item, index }) => {
     return (
       <TouchableOpacity
         style={appStyles.flex_row}
@@ -104,16 +90,16 @@ const HomeScreen = () => {
           })
         }>
         <FastImage
-          source={{uri: item.images}}
-          style={{width: 100, height: 75}}
+          source={{ uri: item.images }}
+          style={{ width: 100, height: 75 }}
           resizeMode="contain"
         />
-        <View style={{alignSelf: 'stretch', gap: 5, flex: 1}}>
-          <AppText numberOfLines={1} style={styles.text_header}>
+        <View style={styles.card}>
+          <AppText numberOfLines={1} style={styles.text_header_den}>
             {item.name}
           </AppText>
           <AppText numberOfLines={1}>{item.address}</AppText>
-          <View style={[appStyles.flex_row, {gap: 5}]}>
+          <View style={[appStyles.flex_row, { gap: 5 }]}>
             <Ionicons name="star" size={12} color={appColors.cam} />
             <AppText>{item.rating}</AppText>
           </View>
@@ -126,13 +112,13 @@ const HomeScreen = () => {
     <SafeAreaView style={styles.container}>
       {/* header */}
       <View style={styles.card_header}>
-        <View>
+        <TouchableOpacity onPress={() => navigate(RouteNames.ADDRESS_LIST)}>
           <AppText style={styles.text_trang}>Giao đến:</AppText>
           <View style={styles.flex_between}>
-            <View style={[styles.flex_row, {width: '95%'}]}>
+            <View style={[styles.flex_row, { width: '95%' }]}>
               <Ionicons name="location" size={20} color={appColors.trang} />
               <AppText style={styles.text_header}>
-                Mễ Trì, Hoàn Kiếm, Hà Nội, Việt Nam
+                {user.address?.find(x => x.isMain)?.name || 'Chưa có địa chỉ'}
               </AppText>
             </View>
             <Ionicons
@@ -141,9 +127,9 @@ const HomeScreen = () => {
               color={appColors.trang}
             />
           </View>
-        </View>
+        </TouchableOpacity>
         <View style={[styles.flex_row, styles.card_input]}>
-          <View style={{width: '5%'}}>
+          <View style={{ width: '5%' }}>
             <Ionicons name="search-outline" size={20} color={appColors.cam} />
           </View>
           <TextInput
@@ -160,7 +146,7 @@ const HomeScreen = () => {
 
       <View style={styles.body}>
         {isLoading ? (
-          <View style={{gap: 8}}>
+          <View style={{ gap: 8 }}>
             {[1, 1, 1, 1, 1, 1, 1]?.map((item, index) => {
               return <CuaHangLoader key={'loader' + index} />;
             })}
@@ -171,7 +157,15 @@ const HomeScreen = () => {
             renderItem={ViewItem}
             key={'listCuaHang'}
             keyExtractor={(item, index) => 'listCuaHang' + item?.restaurantId}
-            contentContainerStyle={{gap: 12}}
+            contentContainerStyle={{ gap: 12 }}
+            getItemLayout={(data, index) => ({
+              length: 87, // height mỗi item + khoảng cách (75 + 12 padding/margin)
+              offset: 87 * index,
+              index,
+            })}
+            initialNumToRender={10}
+            maxToRenderPerBatch={10}
+            windowSize={5}
           />
         )}
       </View>
@@ -224,6 +218,11 @@ const styles = StyleSheet.create({
     color: appColors.trang,
     marginLeft: 10,
   },
+  text_header_den: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: appColors.den,
+  },
   text_trang: {
     color: appColors.trang,
     marginBottom: 6,
@@ -239,6 +238,11 @@ const styles = StyleSheet.create({
     gap: 10,
     paddingHorizontal: 10,
   },
+  card: {
+    alignSelf: 'stretch',
+    gap: 5,
+    flex: 1
+  }
 });
 
 export default HomeScreen;

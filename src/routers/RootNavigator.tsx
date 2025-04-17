@@ -11,6 +11,8 @@ import BottomTabScreen from './BottomTabNavigator';
 import BottomTabQuanLy from './BottomTabNavigatorQuanLy';
 import ChiTietCuaHang from '../screen/cus/restaurants/chiTietCuaHang';
 import chiTietCuaHangQuanLy from '../screen/restaurants/chiTietCuaHangQuanLy';
+import { AddressListScreen } from '../screen/cus/address/addressList';
+import { ChooseMap } from '../screen/cus/address/chooseMap';
 
 const {Navigator, Screen} = createNativeStackNavigator<RootStackParamList>();
 export default function RootNavigator() {
@@ -26,6 +28,8 @@ export default function RootNavigator() {
 
     {name: TabNames.ChiTietCuaHang, component: ChiTietCuaHang},
     {name: TabNames.chiTietCuaHangQuanLy, component: chiTietCuaHangQuanLy},
+    {name: RouteNames.ADDRESS_LIST, component: AddressListScreen},
+    {name: RouteNames.CHOOSE_MAP, component: ChooseMap},
   ];
 
   return (

@@ -4,14 +4,14 @@ import { UserState } from './type'
 const initialState: UserState = {
     id:             "",
     email:          "",
-    userId:         "",
+    userId:         0,
     name:           "",
     paymentMethods: [],
     phone:          "",
     role:           "",
     avatar:         "",
     password:       "",
-    address:        "",
+    address:        [],
     restaurantInfo: "",
 }
 
@@ -21,7 +21,7 @@ const userSlice = createSlice({
 	reducers: {
 		setUserInfo(state: UserState, action: PayloadAction<any>) {
 			console.log("action: ", action)
-			state = action.payload
+			return action.payload
 		},
 		
 	},

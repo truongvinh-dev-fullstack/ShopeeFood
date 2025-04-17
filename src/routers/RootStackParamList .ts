@@ -8,4 +8,7 @@ export type RootStackParamList = {
 
 	[TabNames.ChiTietCuaHang]: undefined
 	[TabNames.chiTietCuaHangQuanLy]: undefined
+
+	[RouteNames.ADDRESS_LIST]: undefined
+	[RouteNames.CHOOSE_MAP]: undefined
 }

@@ -2057,6 +2057,11 @@
     prompts "^2.4.2"
     semver "^7.5.2"
 
+"@react-native-community/geolocation@^3.4.0":
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/@react-native-community/geolocation/-/geolocation-3.4.0.tgz#8b6ee024a71cf94526ab796af1e9ae140684802c"
+  integrity sha512-bzZH89/cwmpkPMKKveoC72C4JH0yF4St5Ceg/ZM9pA1SqX9MlRIrIrrOGZ/+yi++xAvFDiYfihtn9TvXWU9/rA==
+
 "@react-native-firebase/app@^21.6.1":
   version "21.6.1"
   resolved "https://registry.yarnpkg.com/@react-native-firebase/app/-/app-21.6.1.tgz#2f3a5f9bc9436ba3a0a76b9d32eb685e0a379340"
@@ -2423,6 +2428,11 @@
   integrity sha512-r1bzfrm0tomOI8g1SzvCaQHo6Lcv6zu0EA+W2kHrt8dyrHQxGzBBL4kdkzIS+jBMV+EYcMAEAqXqYaLJq5rOZg==
   dependencies:
     "@babel/types" "^7.20.7"
+
+"@types/geojson@^7946.0.13":
+  version "7946.0.16"
+  resolved "https://registry.yarnpkg.com/@types/geojson/-/geojson-7946.0.16.tgz#8ebe53d69efada7044454e3305c19017d97ced2a"
+  integrity sha512-6C8nqWur3j98U6+lXDfTUWIfgvZU+EumvpHKcYjujKH7woYyLj2sUmff0tRhrqM7BohUw7Pz3ZB1jj2gW9Fvmg==
 
 "@types/graceful-fs@^4.1.3":
   version "4.1.9"
@@ -6548,6 +6558,13 @@ react-native-linear-gradient@^2.8.3:
   version "2.8.3"
   resolved "https://registry.yarnpkg.com/react-native-linear-gradient/-/react-native-linear-gradient-2.8.3.tgz#9a116649f86d74747304ee13db325e20b21e564f"
   integrity sha512-KflAXZcEg54PXkLyflaSZQ3PJp4uC4whM7nT/Uot9m0e/qxFV3p6uor1983D1YOBJbJN7rrWdqIjq0T42jOJyA==
+
+react-native-maps@^1.22.1:
+  version "1.22.1"
+  resolved "https://registry.yarnpkg.com/react-native-maps/-/react-native-maps-1.22.1.tgz#0b35c784d71806735f7a6f7eb2a9144eb4ce2806"
+  integrity sha512-vqgRKAsrbl9EymvVHubFMv705mGDhR21Fb6kq7YLSHatJ9qnMx4qWdD+jJeYjeUqYG3KrT4diZ17Y+9OBmX5Jw==
+  dependencies:
+    "@types/geojson" "^7946.0.13"
 
 react-native-modal@^13.0.1:
   version "13.0.1"

@@ -36,7 +36,7 @@ import {navigate} from '../../routers/NavigationService';
 import {RouteNames} from '../../routers/RouteNames';
 import {useCuaHangState} from '../../hook/useCuaHangState';
 import { useUserActions } from '../../hook/useUserAction';
-import { UserState } from '../../redux/slices/type';
+import { Address, UserState } from '../../redux/slices/type';
 
 const LoginScreen = () => {
   const {setUserInfoRedux} = useUserActions();
@@ -79,6 +79,8 @@ const LoginScreen = () => {
   };
 
   const handleSubmit = async (type: number) => {
+    navigate(RouteNames.CHOOSE_MAP)
+    return
     // Type = 1: Ấn tiếp tục khi nhập số điện thoại
     // Type = 2: Ấn tiếp tục đăng nhập khi nhập mật khẩu
     const {phone, password} = form;
@@ -134,13 +136,28 @@ const LoginScreen = () => {
             id: doc.id,
             ...doc.data(),
           }));
-      
-          console.log("User data:", userData);
-          let coordinates = {
-            latitude: userData[0].coordinates.latitude,
-            longitude: userData[0].coordinates.longitude
+
+          // get dữ liệu địa chỉ của người dùng
+          const addressQuery = await firestore()
+          .collection('Address')
+          .where('userId', '==', userData[0].userId)
+          .get();
+          let address : Address[] = [];
+          console.log("addressQuery: ", addressQuery)
+          if(!addressQuery.empty){
+            address = addressQuery.docs.map((doc : any) => ({
+              id: doc.id,
+              ...doc.data(),
+            }));
+            address.forEach(x => {
+              x.location = {
+                latitude: x.location.latitude,
+                longitude: x.location.longitude
+              }
+            })
           }
-          setUserInfoRedux({...userData[0], coordinates})
+      
+          setUserInfoRedux({...userData[0], address})
           let user : UserState = userData[0]
           if(user.role == "CUS"){
             navigate(RouteNames.MAIN)

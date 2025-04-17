@@ -7,12 +7,12 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
-import {Source} from 'react-native-fast-image';
-import {icons} from '../../assets/icons';
-import {textStyles} from '../../themes/TextStyles';
-import {goBack} from '../../routers/NavigationService';
+import { Source } from 'react-native-fast-image';
+import { icons } from '../../assets/icons';
+import { textStyles } from '../../themes/TextStyles';
+import { goBack } from '../../routers/NavigationService';
 import AppIcon from '../icons/Icon';
-import {appColors} from '../../constants/color';
+import { appColors } from '../../constants/color';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 // import AppSegmentedControl, { AppSegmentedControlProps } from '../segmentedControl'
 import _ from 'lodash';
@@ -26,6 +26,7 @@ export type HeaderProps = {
   iconRight?: Source;
   iconLeft?: Source;
   IconLeft?: React.ReactNode;
+  IconRight?: React.ReactNode;
   onIconLeftPress?: () => void;
   onIconRightPress?: () => void;
   iconStyle?: ViewStyle;
@@ -43,6 +44,7 @@ export const Header: React.FC<HeaderProps> = React.memo(
     iconLeft,
     iconStyle,
     IconLeft,
+    IconRight,
     onIconLeftPress,
     onIconRightPress,
     titleColor2,
@@ -56,63 +58,45 @@ export const Header: React.FC<HeaderProps> = React.memo(
     return (
       <View style={styles.container}>
         <View style={[styles.viewHeader]}>
-          {iconLeft ? (
-            <AppIcon
-              onPress={onIconLeftPress}
-              style={{alignSelf: 'flex-start', ...iconStyle}}
-              source={iconLeft}
-            />
-          ) : hasBack ? (
-            <AppIcon onPress={onBack} source={icons.ic_chevron_left} />
-          ) : IconLeft ? (
-            <TouchableOpacity>{IconLeft}</TouchableOpacity>
-          ) : (
-            <View style={{width: 1}} />
-          )}
-          {title ? (
-            <Text
-              style={{
-                ...textStyles.textMediumBold,
-                color: titleColor,
-                fontSize: 17,
-              }}>
-              {title}
-            </Text>
-          ) : (
-            Title
-          )}
-          {iconRight ? (
-            <View>
-              {count > 0 ? (
-                <View
-                  style={{
-                    position: 'absolute',
-                    backgroundColor: appColors.red,
-                    width: 22,
-                    height: 22,
-                    borderRadius: 11,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    top: -10,
-                    right: 0,
-                  }}>
-                  <Text style={[{fontSize: 10, color: appColors.white}]}>
-                    {count}
-                  </Text>
-                </View>
-              ) : null}
+          <View style={{ width: "6%" }}>
+            {iconLeft ? (
               <AppIcon
-                onPress={onIconRightPress}
-                style={{alignSelf: 'flex-start', ...iconStyle}}
-                source={iconRight}
-                tintColor={titleColor2}
+                onPress={onIconLeftPress}
+                style={{ alignSelf: 'flex-start', ...iconStyle }}
+                source={iconLeft}
               />
-            </View>
-          ) : (
-            <View style={{width: 1}} />
-          )}
+            ) : hasBack ? (
+              <AppIcon onPress={onBack} source={icons.ic_chevron_left} />
+            ) : IconLeft ? (
+              <TouchableOpacity onPress={onIconLeftPress}>{IconLeft}</TouchableOpacity>
+            ) : (
+              <View style={{ width: 1 }} />
+            )}
+          </View>
+
+          <View style={{width: "85%", alignItems: 'center', justifyContent: 'center'}}>
+              {title ? (
+                <Text
+                  style={{
+                    ...textStyles.textMediumBold,
+                    color: titleColor,
+                    fontSize: 17,
+                  }}>
+                  {title}
+                </Text>
+              ) : (
+                Title
+              )}
+          </View>
+          <View style={{width: "6%"}}>
+            {
+              IconRight ? (
+                <TouchableOpacity onPress={onIconRightPress}>{IconRight}</TouchableOpacity>
+              ) : (
+                <View style={{ width: 1 }} />)}
+          </View>
+
         </View>
-        {/* {props?.segmentData?.length ? <AppSegmentedControl {...props} /> : null} */}
       </View>
     );
   },

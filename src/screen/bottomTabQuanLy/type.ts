@@ -27,11 +27,11 @@ export interface CuaHang {
   name: string;
   numberOfRatings: number;
   rating: number;
-  restaurantId: string;
+  restaurantId: number;
   type: string;
   location: Location[];
   openingHours: OpeningHour[];
-  createdAt: CreatedAt[];
+  createdAt: number;
 }
 
 export interface CreatedAt {

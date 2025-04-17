@@ -9,7 +9,7 @@ export interface CuaHangType {
     name:            string;
     numberOfRatings: number;
     rating:          number;
-    restaurantId:    string;
+    restaurantId:    number;
     type:            string;
     location: Location[];
     openingHours: OpeningHour[],
@@ -32,16 +32,23 @@ export interface Location {
 export interface UserState {
     id:             string;
     email:          string;
-    userId:         string;
+    userId:         number;
     name:           string;
     paymentMethods: number[];
     phone:          string;
     role:           string;
     avatar:         string;
     password:       string;
-    address:        string;
+    address:        Address[];
     restaurantInfo: string;
-    coordinates: Location
+}
+
+export interface Address {
+    id:             string;
+    userId:         number;
+    name:           string;
+    isMain:          number;
+    location: Location
 }
 
 export interface OrderState {

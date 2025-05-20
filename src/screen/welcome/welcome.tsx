@@ -1,4 +1,5 @@
-import React, {memo, useEffect, useRef, useState} from 'react';
+/* eslint-disable react/no-unstable-nested-components */
+import React, {memo, useState} from 'react';
 import {View, StyleSheet} from 'react-native';
 import {AppText} from '../../compoments/text/AppText';
 import {appColors} from '../../constants/color';
@@ -10,8 +11,7 @@ import Animated, {FadeInRight, FadeInUp} from 'react-native-reanimated';
 import {appConfig} from '../../constants/AppConfig';
 import {navigate} from '../../routers/NavigationService';
 import {RouteNames} from '../../routers/RouteNames';
-import {useFocusEffect, useNavigation} from '@react-navigation/native';
-import { useUserState } from '../../hook/useUserState';
+import {useFocusEffect} from '@react-navigation/native';
 
 interface ViewTextAnimatedProps {
   text: string;
@@ -21,14 +21,12 @@ interface ViewTextAnimatedProps {
 }
 
 const WelcomeScreen = () => {
-  const {user} = useUserState();
   const [animate, setAnimate] = useState(false);
 
   useFocusEffect(
     React.useCallback(() => {
       setAnimate(true);
       const timeout = setTimeout(() => {
-        console.log("user: ", user)
         navigate(RouteNames.LOGIN);
       }, 3500);
 
@@ -90,6 +88,8 @@ const WelcomeScreen = () => {
           )}
         </View>
       </View>
+
+      <View className='' />
     </SafeAreaView>
   );
 };

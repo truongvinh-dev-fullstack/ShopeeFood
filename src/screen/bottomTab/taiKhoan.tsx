@@ -1,5 +1,5 @@
 import React, {memo, useEffect, useRef, useState} from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, TouchableOpacity} from 'react-native';
 import {AppText} from '../../compoments/text/AppText';
 import {appColors} from '../../constants/color';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -25,6 +25,9 @@ const TaiKhoanScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <TouchableOpacity onPress={() => navigate(RouteNames.PURCHASE_PACKAGE_LIST)}>
+        <AppText>Đăng ký gói</AppText>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 };

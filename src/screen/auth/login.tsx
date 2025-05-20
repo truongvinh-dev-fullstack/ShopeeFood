@@ -79,8 +79,6 @@ const LoginScreen = () => {
   };
 
   const handleSubmit = async (type: number) => {
-    navigate(RouteNames.CHOOSE_MAP)
-    return
     // Type = 1: Ấn tiếp tục khi nhập số điện thoại
     // Type = 2: Ấn tiếp tục đăng nhập khi nhập mật khẩu
     const {phone, password} = form;

@@ -204,16 +204,6 @@ export const ThucDon: React.FC<ThucDonProps> = ({cuaHang}) => {
                   color={appColors.trang}
                 />
               </TouchableOpacity>
-
-              {/* <TouchableOpacity
-                style={styles.addMonAnHeader}
-                onPress={() => setModalThemMoi(true)}>
-                <Ionicons
-                  name="add-outline"
-                  size={25}
-                  color={appColors.trang}
-                />
-              </TouchableOpacity> */}
             </View>
           </View>
           <View style={{flex: 1, paddingTop: 50}}>

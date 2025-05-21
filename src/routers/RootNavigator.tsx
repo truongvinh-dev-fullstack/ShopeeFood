@@ -1,11 +1,9 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 // import {createStackNavigator} from '@react-navigation/stack';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {RootStackParamList} from './RootStackParamList ';
 import {RouteNames, TabNames} from './RouteNames';
 import LoginScreen from '../screen/auth/login';
-import {AppText} from '../compoments/text/AppText';
-import {View} from 'react-native';
 import WelcomeScreen from '../screen/welcome/welcome';
 import BottomTabScreen from './BottomTabNavigator';
 import BottomTabQuanLy from './BottomTabNavigatorQuanLy';

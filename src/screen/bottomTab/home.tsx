@@ -1,3 +1,5 @@
+/* eslint-disable react-native/no-inline-styles */
+/* eslint-disable react/no-unstable-nested-components */
 import React, { memo, useEffect, useRef, useState } from 'react';
 import {
   View,
@@ -25,6 +27,7 @@ import { CuaHangType } from '../../redux/slices/type';
 import crashlytics from '@react-native-firebase/crashlytics';
 import { useUserState } from '../../hook/useUserState';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import Animated, { FadeInDown } from 'react-native-reanimated';
 
 
 const HomeScreen = () => {
@@ -82,29 +85,35 @@ const HomeScreen = () => {
 
   const ViewItem: ListRenderItem<CuaHang> = ({ item, index }) => {
     return (
-      <TouchableOpacity
-        style={appStyles.flex_row}
-        onPress={() =>
-          navigate(TabNames.ChiTietCuaHang, {
-            item: item,
-          })
-        }>
-        <FastImage
-          source={{ uri: item.images }}
-          style={{ width: 100, height: 75 }}
-          resizeMode="contain"
-        />
-        <View style={styles.card}>
-          <AppText numberOfLines={1} style={styles.text_header_den}>
-            {item.name}
-          </AppText>
-          <AppText numberOfLines={1}>{item.address}</AppText>
-          <View style={[appStyles.flex_row, { gap: 5 }]}>
-            <Ionicons name="star" size={12} color={appColors.cam} />
-            <AppText>{item.rating}</AppText>
+      <Animated.View entering={FadeInDown.delay(index * 100).duration(500).springify()}>
+        <TouchableOpacity
+          key={'item' + item.restaurantId + index}
+          style={appStyles.flex_row}
+          onPress={() =>
+            navigate(TabNames.ChiTietCuaHang, {
+              item: item,
+            })
+          }>
+          <Animated.View>
+            <FastImage
+              source={{ uri: item.images }}
+              style={{ width: 100, height: 75 }}
+              resizeMode="contain"
+            />
+          </Animated.View>
+          <View style={styles.card}>
+            <AppText numberOfLines={1} style={styles.text_header_den}>
+              {item.name}
+            </AppText>
+            <AppText numberOfLines={1}>{item.address}</AppText>
+            <View style={[appStyles.flex_row, { gap: 5 }]}>
+              <Ionicons name="star" size={12} color={appColors.cam} />
+              <AppText>{item.rating}</AppText>
+            </View>
           </View>
-        </View>
-      </TouchableOpacity>
+        </TouchableOpacity>
+      </Animated.View>
+
     );
   };
 
@@ -145,7 +154,7 @@ const HomeScreen = () => {
       </View>
 
       <View style={styles.body}>
-        {isLoading ? (
+        {isLoading && listCuaHang?.length > 0 ? (
           <View style={{ gap: 8 }}>
             {[1, 1, 1, 1, 1, 1, 1]?.map((item, index) => {
               return <CuaHangLoader key={'loader' + index} />;
@@ -156,7 +165,7 @@ const HomeScreen = () => {
             data={listCuaHang}
             renderItem={ViewItem}
             key={'listCuaHang'}
-            keyExtractor={(item, index) => 'listCuaHang' + item?.restaurantId}
+            keyExtractor={(item) => 'listCuaHang' + item?.restaurantId}
             contentContainerStyle={{ gap: 12 }}
             getItemLayout={(data, index) => ({
               length: 87, // height mỗi item + khoảng cách (75 + 12 padding/margin)

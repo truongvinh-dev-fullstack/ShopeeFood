@@ -1,4 +1,6 @@
-import React, {useEffect, useRef, useState} from 'react';
+/* eslint-disable react-native/no-inline-styles */
+/* eslint-disable eqeqeq */
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -8,20 +10,20 @@ import {
   Alert,
   ImageBackground,
 } from 'react-native';
-import {AppText} from '../../compoments/text/AppText';
-import {appColors} from '../../constants/color';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {Header} from '../../compoments/header';
+import { AppText } from '../../compoments/text/AppText';
+import { appColors } from '../../constants/color';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Header } from '../../compoments/header';
 import FastImage from 'react-native-fast-image';
-import {images} from '../../assets/images';
-import {AppInput} from '../../compoments/textInput/TextInput';
+import { images } from '../../assets/images';
+import { AppInput } from '../../compoments/textInput/TextInput';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {showToast} from '../../helper/postServices';
+import { showToast } from '../../helper/postServices';
 import LinearGradient from 'react-native-linear-gradient';
 
 import firestore from '@react-native-firebase/firestore';
-import {appConfig} from '../../constants/AppConfig';
-import {icons} from '../../assets/icons';
+import { appConfig } from '../../constants/AppConfig';
+import { icons } from '../../assets/icons';
 import Animated, {
   Easing,
   FadeInDown,
@@ -32,14 +34,14 @@ import Animated, {
   withDelay,
   withTiming,
 } from 'react-native-reanimated';
-import {navigate} from '../../routers/NavigationService';
-import {RouteNames} from '../../routers/RouteNames';
-import {useCuaHangState} from '../../hook/useCuaHangState';
+import { navigate } from '../../routers/NavigationService';
+import { RouteNames } from '../../routers/RouteNames';
+import { useCuaHangState } from '../../hook/useCuaHangState';
 import { useUserActions } from '../../hook/useUserAction';
 import { Address, UserState } from '../../redux/slices/type';
 
 const LoginScreen = () => {
-  const {setUserInfoRedux} = useUserActions();
+  const { setUserInfoRedux } = useUserActions();
   const [form, setForm] = useState({
     phone: '',
     password: '',
@@ -71,17 +73,17 @@ const LoginScreen = () => {
   };
 
   const handleInputChange = (field: string, value: string) => {
-    setForm(prevForm => ({...prevForm, [field]: value}));
+    setForm(prevForm => ({ ...prevForm, [field]: value }));
   };
 
   const handlePlaceHolderChange = (field: string, value: string) => {
-    setPlaceHolder(prevForm => ({...prevForm, [field]: value}));
+    setPlaceHolder(prevForm => ({ ...prevForm, [field]: value }));
   };
 
   const handleSubmit = async (type: number) => {
     // Type = 1: Ấn tiếp tục khi nhập số điện thoại
     // Type = 2: Ấn tiếp tục đăng nhập khi nhập mật khẩu
-    const {phone, password} = form;
+    const { phone, password } = form;
     switch (type) {
       case 1: {
         if (!phone) {
@@ -96,7 +98,7 @@ const LoginScreen = () => {
         if (userQuerySnapshot.empty) {
           showToast('error', 'Số điện thoại chưa được đăng ký!');
           return null;
-        }else{
+        } else {
           rightAnimatedPhone.value = withTiming(appConfig.width, {
             duration: 300,
             easing: Easing.inOut(Easing.quad),
@@ -111,8 +113,7 @@ const LoginScreen = () => {
             }),
           );
         }
-        return
-        
+        return;
       }
       case 2: {
         if (!password) {
@@ -121,60 +122,59 @@ const LoginScreen = () => {
         }
         try {
           const userQuerySnapshot = await firestore()
-          .collection('Users') // Chọn bảng "User"
-          .where('phone', '==', phone)  // điều kiện
-          .where('password', '==', password)  // điều kiện
-          .get();
+            .collection('Users') // Chọn bảng "User"
+            .where('phone', '==', phone)  // điều kiện
+            .where('password', '==', password)  // điều kiện
+            .get();
 
-        if (userQuerySnapshot.empty) {
-          showToast('error', 'Mật khẩu không chính xác!');
-          return
-        }else{
-          const userData : any = userQuerySnapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          }));
-
-          // get dữ liệu địa chỉ của người dùng
-          const addressQuery = await firestore()
-          .collection('Address')
-          .where('userId', '==', userData[0].userId)
-          .get();
-          let address : Address[] = [];
-          console.log("addressQuery: ", addressQuery)
-          if(!addressQuery.empty){
-            address = addressQuery.docs.map((doc : any) => ({
+          if (userQuerySnapshot.empty) {
+            showToast('error', 'Mật khẩu không chính xác!');
+            return;
+          } else {
+            const userData: any = userQuerySnapshot.docs.map((doc) => ({
               id: doc.id,
               ...doc.data(),
             }));
-            address.forEach(x => {
-              x.location = {
-                latitude: x.location.latitude,
-                longitude: x.location.longitude
-              }
-            })
+
+            // get dữ liệu địa chỉ của người dùng
+            const addressQuery = await firestore()
+              .collection('Address')
+              .where('userId', '==', userData[0].userId)
+              .get();
+            let address: Address[] = [];
+            if (!addressQuery.empty) {
+              address = addressQuery.docs.map((doc: any) => ({
+                id: doc.id,
+                ...doc.data(),
+              }));
+              address.forEach(x => {
+                x.location = {
+                  latitude: x.location.latitude,
+                  longitude: x.location.longitude,
+                };
+              });
+            }
+
+            setUserInfoRedux({ ...userData[0], address });
+            let user: UserState = userData[0];
+            if (user.role == 'CUS') {
+              navigate(RouteNames.MAIN);
+            }
+            if (user.role == 'ADMIN') {
+              navigate(RouteNames.MAIN_QUANLY);
+            }
           }
-      
-          setUserInfoRedux({...userData[0], address})
-          let user : UserState = userData[0]
-          if(user.role == "CUS"){
-            navigate(RouteNames.MAIN)
-          }
-          if(user.role == "ADMIN"){
-            navigate(RouteNames.MAIN_QUANLY)
-          }
-        }
         } catch (error) {
-          
+
         }
       }
     }
-  
+
   };
 
   const phuonThucKhacAnimed = FadeInDown.withInitialValues({
     opacity: 0,
-    transform: [{translateY: 50}],
+    transform: [{ translateY: 50 }],
   })
     .duration(400)
     .delay(500)
@@ -198,7 +198,7 @@ const LoginScreen = () => {
               entering={FadeInRight.delay(300)
                 .withInitialValues({
                   opacity: 0.1,
-                  transform: [{translateX: appConfig.width / 2}],
+                  transform: [{ translateX: appConfig.width / 2 }],
                 })
                 .duration(500)
                 .springify()
@@ -216,10 +216,10 @@ const LoginScreen = () => {
                   opacity: opacityAnimated,
                 },
               ]}>
-              <View style={{height: 50}}></View>
+              <View style={{ height: 50 }} />
               <Animated.View
                 style={[
-                  {paddingHorizontal: 16, position: 'absolute', right: rightAnimatedPhone}
+                  { paddingHorizontal: 16, position: 'absolute', right: rightAnimatedPhone }
                 ]}
               >
                 <AppInput
@@ -285,9 +285,9 @@ const LoginScreen = () => {
               </Animated.View>
 
               <TouchableOpacity style={styles.button} onPress={() => {
-                if(!form.password){
-                  handleSubmit(1)
-                }else handleSubmit(2)
+                if (!form.password) {
+                  handleSubmit(1);
+                } else {handleSubmit(2);}
               }}>
                 <Text style={styles.buttonText}>Tiếp tục</Text>
               </TouchableOpacity>
@@ -295,15 +295,15 @@ const LoginScreen = () => {
               <View style={styles.box_hoac}>
                 <LinearGradient
                   colors={[appColors.trang, appColors.xam]}
-                  start={{x: 0, y: 0}}
-                  end={{x: 1, y: 0}}
-                  style={{width: 120, height: 1}}></LinearGradient>
-                <AppText style={{color: appColors.xamDam}}>HOẶC</AppText>
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  style={{ width: 120, height: 1 }} />
+                <AppText style={{ color: appColors.xamDam }}>HOẶC</AppText>
                 <LinearGradient
                   colors={[appColors.xam, appColors.trang]}
-                  start={{x: 0, y: 0}}
-                  end={{x: 1, y: 0}}
-                  style={{width: 120, height: 1}}></LinearGradient>
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  style={{ width: 120, height: 1 }} />
               </View>
             </Animated.View>
 
@@ -317,7 +317,7 @@ const LoginScreen = () => {
                 style={styles.imagesIconDangNapKhac}
               />
               <AppText>Tiếp tục với Shopee</AppText>
-              <View style={styles.imagesIconDangNapKhac}></View>
+              <View style={styles.imagesIconDangNapKhac} />
             </Animated.View>
             <Animated.View
               entering={phuonThucKhacAnimed}
@@ -328,7 +328,7 @@ const LoginScreen = () => {
                 style={styles.imagesIconDangNapKhac}
               />
               <AppText>Tiếp tục với Google</AppText>
-              <View style={styles.imagesIconDangNapKhac}></View>
+              <View style={styles.imagesIconDangNapKhac} />
             </Animated.View>
             <Animated.View
               entering={phuonThucKhacAnimed}
@@ -339,7 +339,7 @@ const LoginScreen = () => {
                 style={styles.imagesIconDangNapKhac}
               />
               <AppText>Tiếp tục với Facebook</AppText>
-              <View style={styles.imagesIconDangNapKhac}></View>
+              <View style={styles.imagesIconDangNapKhac} />
             </Animated.View>
             <Animated.View
               entering={phuonThucKhacAnimed}
@@ -350,7 +350,7 @@ const LoginScreen = () => {
                 style={styles.imagesIconDangNapKhac}
               />
               <AppText>Tiếp tục với Apple</AppText>
-              <View style={styles.imagesIconDangNapKhac}></View>
+              <View style={styles.imagesIconDangNapKhac} />
             </Animated.View>
           </View>
         </LinearGradient>
